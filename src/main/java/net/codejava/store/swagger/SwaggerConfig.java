@@ -30,7 +30,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)/*.configure(new DocumentationContextBuilder().)*/
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.ptit.edu.store"))
+                .apis(RequestHandlerSelectors.basePackage("net.codejava.store"))
                 .paths(PathSelectors.any())
                 .build()
                 .useDefaultResponseMessages(false)
