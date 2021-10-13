@@ -7,7 +7,7 @@ public class SaveClothesPreview {
     private String id;
     private String name;
     private String logoUrl;
-    private int price;
+    private double price;
     private long saveDate;
 
     public SaveClothesPreview() {
@@ -16,7 +16,7 @@ public class SaveClothesPreview {
     public SaveClothesPreview(SaveClothes saveClothes) {
         setId(saveClothes.getClothes().getId());
         setName(saveClothes.getClothes().getName());
-        setLogoUrl(saveClothes.getClothes().getLogoUrl());
+        setLogoUrl(saveClothes.getClothes().getAvatarUrl());
         setPrice(saveClothes.getClothes().getPrice());
         setSaveDate(saveClothes.getSaveDate().getTime());
     }
@@ -46,11 +46,11 @@ public class SaveClothesPreview {
     }
 
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 

@@ -15,15 +15,15 @@ import net.codejava.store.customer.models.body.RateBody;
 import net.codejava.store.customer.models.body.SetOrderBody;
 import net.codejava.store.customer.models.data.Customer;
 import net.codejava.store.customer.models.data.Feedback;
-import net.codejava.store.customer.models.data.Order;
+import net.codejava.store.customer.models.data.CustomerOrder;
 import net.codejava.store.customer.models.data.Rate;
 import net.codejava.store.customer.models.view.HeaderProfile;
-import net.codejava.store.customer.models.view.OrderPreview;
+import net.codejava.store.customer.models.view.CustomerOrderPreview;
 import net.codejava.store.customer.models.view.Profile;
 import net.codejava.store.customer.models.view.SaveClothesPreview;
-import net.codejava.store.product.dao.ClothesRepository;
+import net.codejava.store.product.dao.ProductsRepository;
 import net.codejava.store.product.dao.OrderRepository;
-import net.codejava.store.product.models.data.Clothes;
+import net.codejava.store.product.models.data.Product;
 import net.codejava.store.product.models.data.SaveClothes;
 import net.codejava.store.response_model.NotFoundResponse;
 import net.codejava.store.response_model.OkResponse;
@@ -50,7 +50,7 @@ public class CustomerController {
     @Autowired
     RateRepository rateRepository;
     @Autowired
-    private ClothesRepository clothesRepository;
+    private ProductsRepository productsRepository;
     @Autowired
     SaveClothesRepository saveClothesRepository;
     @Autowired
@@ -109,8 +109,8 @@ public class CustomerController {
                                           @PathVariable("id") String clothesID) {
         Response response;
         try {
-            Clothes clothes = clothesRepository.findById(clothesID);
-            if (clothes == null) {
+            Product product = productsRepository.findById(clothesID);
+            if (product == null) {
                 return new NotFoundResponse("Clothes not Exist");
             }
 
@@ -229,7 +229,7 @@ public class CustomerController {
     public Response getDetailClothes(@PathVariable("id") String clothesID) {
         Response response;
         try {
-            response = new OkResponse(clothesRepository.findById(clothesID));
+            response = new OkResponse(productsRepository.findById(clothesID));
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
@@ -246,15 +246,15 @@ public class CustomerController {
             if (customer == null) {
                 return new NotFoundResponse("Customer not Exist");
             }
-            Clothes clothes = clothesRepository.findById(clothesID);
-            if (clothes == null) {
+            Product product = productsRepository.findById(clothesID);
+            if (product == null) {
                 return new NotFoundResponse("Clothes not Exist");
             }
 
-            clothes.addSave();
-            clothesRepository.save(clothes);
+            product.addSave();
+            productsRepository.save(product);
 
-            saveClothesRepository.save(new SaveClothes(clothes, customer));
+            saveClothesRepository.save(new SaveClothes(product, customer));
             response = new OkResponse();
         } catch (Exception e) {
             e.printStackTrace();
@@ -286,13 +286,13 @@ public class CustomerController {
             if (customer == null) {
                 return new NotFoundResponse("Customer not Exist");
             }
-            Clothes clothes = clothesRepository.findById(clothesID);
-            if (clothes == null) {
+            Product product = productsRepository.findById(clothesID);
+            if (product == null) {
                 return new NotFoundResponse("Clothes not Exist");
             }
 
-            clothes.subSave();
-            clothesRepository.save(clothes);
+            product.subSave();
+            productsRepository.save(product);
             saveClothesRepository.deleteByCustomer_idAndAndClothes_Id(customer.getId(), clothesID);
 
             Pageable pageable = PageAndSortRequestBuilder
@@ -320,13 +320,13 @@ public class CustomerController {
                 return new NotFoundResponse("Customer not Exist");
             }
 
-            Clothes clothes = clothesRepository.findOne(clothesID);
-            if (clothes == null) {
+            Product product = productsRepository.findOne(clothesID);
+            if (product == null) {
                 return new NotFoundResponse("Customer not Exist");
             }
 
-            Order order = new Order(clothes, customer, orderBody);
-            orderRepository.save(order);
+            CustomerOrder customerOrder = new CustomerOrder(product, customer, orderBody);
+            orderRepository.save(customerOrder);
             response = new OkResponse();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -346,10 +346,10 @@ public class CustomerController {
             }
 
             for(SetOrderBody setOrderBody:orderBodies){
-                Clothes clothes = clothesRepository.findOne(setOrderBody.getClothesID());
-                if(clothes!=null){
-                    Order order = new Order(clothes,customer,setOrderBody);
-                    orderRepository.save(order);
+                Product product = productsRepository.findOne(setOrderBody.getClothesID());
+                if(product !=null){
+                    CustomerOrder customerOrder = new CustomerOrder(product,customer,setOrderBody);
+                    orderRepository.save(customerOrder);
                 }
             }
             response = new OkResponse();
@@ -363,8 +363,8 @@ public class CustomerController {
     @ApiOperation(value = "Lay tat ca cac don dat hang cua khach hang")
     @GetMapping("/{customerID}/orders")
     public Response getAllOrder(@PathVariable("customerID") String customerID,
-                                @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là : " + Order.CREATED_DATE)
-                                @RequestParam(value = "pageIndex", defaultValue = Order.CREATED_DATE) String sortBy,
+                                @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là : " + CustomerOrder.CREATED_DATE)
+                                @RequestParam(value = "pageIndex", defaultValue = CustomerOrder.CREATED_DATE) String sortBy,
                                 @ApiParam(name = "sortType", value = "Nhận asc|desc, mặc đính là desc")
                                 @RequestParam(value = "pageSize", required = false, defaultValue = "desc") String sortType,
                                 @ApiParam(name = "pageIndex", value = "index trang, mặc định là 0")
@@ -378,8 +378,8 @@ public class CustomerController {
             if (customer == null) {
                 return new NotFoundResponse("Customer not Exist");
             }
-            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, Order.CREATED_DATE, "desc", Constant.MAX_PAGE_SIZE);
-            Page<OrderPreview> orderPreviews = orderRepository.getAllOrderPreview(customerID, pageable);
+            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, CustomerOrder.CREATED_DATE, "desc", Constant.MAX_PAGE_SIZE);
+            Page<CustomerOrderPreview> orderPreviews = orderRepository.getAllOrderPreview(customerID, pageable);
 
             response = new OkResponse(orderPreviews);
         } catch (Exception e) {

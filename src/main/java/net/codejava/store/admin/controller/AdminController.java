@@ -14,10 +14,10 @@ import net.codejava.store.auth.dao.UserRespository;
 import net.codejava.store.auth.models.User;
 import net.codejava.store.notification.FCMService;
 import net.codejava.store.product.dao.CategoryRepository;
-import net.codejava.store.product.dao.ClothesRepository;
+import net.codejava.store.product.dao.ProductsRepository;
 import net.codejava.store.product.models.body.ClothesBody;
 import net.codejava.store.product.models.data.Category;
-import net.codejava.store.product.models.data.Clothes;
+import net.codejava.store.product.models.data.Product;
 import net.codejava.store.response_model.NotFoundResponse;
 import net.codejava.store.response_model.OkResponse;
 import net.codejava.store.response_model.Response;
@@ -53,7 +53,7 @@ public class AdminController {
     @Autowired
     CategoryRepository categoryRepository;
     @Autowired
-    ClothesRepository clothesRepository;
+    ProductsRepository productsRepository;
     @Autowired
     RestTemplate restTemplate;
     @Autowired
@@ -112,14 +112,14 @@ public class AdminController {
             if(category == null){
                 return new NotFoundResponse("Category not exist!");
             }
-            Clothes clothes = new Clothes(clothesBody);
-            clothes.setCategory(category);
-            clothesRepository.save(clothes);
+            Product product = new Product(clothesBody);
+            product.setCategory(category);
+            productsRepository.save(product);
             List<User> users = userRespository.findAll();
             for (User u:users){
-                FCMService.sendNotification(restTemplate,u.getFcmToken(),clothes);
+                FCMService.sendNotification(restTemplate,u.getFcmToken(), product);
             }
-            response = new OkResponse(clothes);
+            response = new OkResponse(product);
         }catch (Exception e){
             e.printStackTrace();
             response = new ServerErrorResponse();
@@ -128,81 +128,81 @@ public class AdminController {
     }
 
 
-    @ApiOperation(value = "xuất thông tin sản phẩm quần áo", response = Iterable.class)
-    @PutMapping("import/clothes")
-    @Transactional(rollbackFor = Exception.class)
-    Response importClothes() {
-        Response response;
-
-        try {
-            InputStream ExcelFileToRead = new FileInputStream("D:\\Downloads\\store\\ptit.store\\src\\main\\resources\\demo.xlsx");
-            XSSFWorkbook wb = new XSSFWorkbook(ExcelFileToRead);
-            XSSFSheet sheet = wb.getSheetAt(0);
-            XSSFRow row;
-            XSSFCell cell;
-            List<Clothes> clothes = new ArrayList<>();
-            Iterator rows = sheet.rowIterator();
-
-            rows.next();
-            while (rows.hasNext()) {
-                Clothes clothes1 = new Clothes();
-                row = (XSSFRow) rows.next();
-                Iterator cellIterator = row.cellIterator();
-                cellIterator.next();
-                while (cellIterator.hasNext()) {
-                    cell = (XSSFCell) cellIterator.next();
-//                    System.out.println(cell.getColumnIndex());
-                    switch (cell.getColumnIndex()) {
-                        case 0: {
-                            System.out.print("0");
-//                            clothes1.setPrice((int) getCellValue(cell));
-//                            System.out.println(getCellValue(cell).toString());
-                            break;
-                        }
-                        case 1: {
-                            System.out.print("1");
-
-//                            clothes1.setDescription((String) getCellValue(cell));
-                            break;
-                        }
-                        case 2: {
-                            System.out.print("2");
-
-                            clothes1.setLogoUrl((String) getCellValue(cell));
-                            break;
-                        }
-
-                        case 3: {
-                            System.out.print("3");
-
-                            clothes1.setName((String) getCellValue(cell));
-                            break;
-                        }
-                        case 4: {
-                            System.out.print("4");
-
-                            clothes1.setCategory(categoryRepository.findOne((String) getCellValue(cell)));
-                            break;
-                        }
-                        case 5: {
-                            System.out.println("5");
-                            clothes1.setPrice((int)((double) getCellValue(cell)));
-                            break;
-                        }
-                    }
-                }
-                clothes1.setCreatedDate(new Date());
-                clothesRepository.save(clothes1);
-                clothes.add(clothes1);
-            }
-
-            response = new OkResponse(clothes);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @ApiOperation(value = "xuất thông tin sản phẩm quần áo", response = Iterable.class)
+//    @PutMapping("import/clothes")
+//    @Transactional(rollbackFor = Exception.class)
+//    Response importClothes() {
+//        Response response;
+//
+//        try {
+//            InputStream ExcelFileToRead = new FileInputStream("D:\\Downloads\\store\\ptit.store\\src\\main\\resources\\demo.xlsx");
+//            XSSFWorkbook wb = new XSSFWorkbook(ExcelFileToRead);
+//            XSSFSheet sheet = wb.getSheetAt(0);
+//            XSSFRow row;
+//            XSSFCell cell;
+//            List<Product> clothes = new ArrayList<>();
+//            Iterator rows = sheet.rowIterator();
+//
+//            rows.next();
+//            while (rows.hasNext()) {
+//                Product product1 = new Product();
+//                row = (XSSFRow) rows.next();
+//                Iterator cellIterator = row.cellIterator();
+//                cellIterator.next();
+//                while (cellIterator.hasNext()) {
+//                    cell = (XSSFCell) cellIterator.next();
+////                    System.out.println(cell.getColumnIndex());
+//                    switch (cell.getColumnIndex()) {
+//                        case 0: {
+//                            System.out.print("0");
+////                            clothes1.setPrice((int) getCellValue(cell));
+////                            System.out.println(getCellValue(cell).toString());
+//                            break;
+//                        }
+//                        case 1: {
+//                            System.out.print("1");
+//
+////                            clothes1.setDescription((String) getCellValue(cell));
+//                            break;
+//                        }
+//                        case 2: {
+//                            System.out.print("2");
+//
+//                            product1.setLogoUrl((String) getCellValue(cell));
+//                            break;
+//                        }
+//
+//                        case 3: {
+//                            System.out.print("3");
+//
+//                            product1.setName((String) getCellValue(cell));
+//                            break;
+//                        }
+//                        case 4: {
+//                            System.out.print("4");
+//
+//                            product1.setCategory(categoryRepository.findOne((String) getCellValue(cell)));
+//                            break;
+//                        }
+//                        case 5: {
+//                            System.out.println("5");
+//                            product1.setPrice((int)((double) getCellValue(cell)));
+//                            break;
+//                        }
+//                    }
+//                }
+//                product1.setCreatedDate(new Date());
+//                productsRepository.save(product1);
+//                clothes.add(product1);
+//            }
+//
+//            response = new OkResponse(clothes);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
     private Object getCellValue(Cell cell) {
         switch (cell.getCellType()) {

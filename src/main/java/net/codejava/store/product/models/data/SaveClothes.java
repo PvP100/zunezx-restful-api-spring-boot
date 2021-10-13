@@ -17,7 +17,7 @@ public class SaveClothes {
     private String id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clothesID")
-    private Clothes clothes;
+    private Product product;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customerID")
     private Customer customer;
@@ -26,8 +26,8 @@ public class SaveClothes {
     public SaveClothes() {
     }
 
-    public SaveClothes(Clothes clothes, Customer customer) {
-        this.clothes = clothes;
+    public SaveClothes(Product product, Customer customer) {
+        this.product = product;
         this.customer = customer;
         this.saveDate= new Date();
     }
@@ -40,12 +40,12 @@ public class SaveClothes {
         this.id = id;
     }
 
-    public Clothes getClothes() {
-        return clothes;
+    public Product getClothes() {
+        return product;
     }
 
-    public void setClothes(Clothes clothes) {
-        this.clothes = clothes;
+    public void setClothes(Product clothes) {
+        this.product = product;
     }
 
     public Customer getCustomer() {

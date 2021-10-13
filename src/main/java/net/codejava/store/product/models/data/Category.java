@@ -11,6 +11,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "Category")
 public class Category {
+    public static final String TITLE = "title";
     @Id
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @GeneratedValue(generator = "uuid")
@@ -33,3 +34,4 @@ public class Category {
         this.title = title;
     }
 }
+

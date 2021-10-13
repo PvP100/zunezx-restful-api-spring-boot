@@ -9,40 +9,85 @@ import java.util.Date;
 import java.util.Set;
 
 @Entity
-@Table(name = "clothes")
-public class Clothes {
+@Table(name = "product")
+public class Product {
     public static final String CREATED_DATE = "createdDate";
     @Id
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @GeneratedValue(generator = "uuid")
     private String id;
     private String name;
-    private int price;
+    private double price;
     private String description;
     private Date createdDate;
-    private String logoUrl;
-
+    private String avatarUrl;
+    private String coverUrl;
+    private String size;
+    private int isSale;
+    private int quantity;
+    private float salePercent;
     private int totalSave;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name= "categoryID")
     private Category category;
 
-    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<RateClothes> rateClothes;
 
-    public Clothes() {
+    public Product() {
+        this.createdDate = new Date();
     }
 
-    public Clothes(ClothesBody body) {
+    public Product(ClothesBody body) {
         this.name = body.getName();
         this.price = body.getPrice();
         this.description = body.getDescription();
         this.createdDate = new Date();
-        this.logoUrl = body.getLogoUrl();
         this.totalSave = 0;
+        this.isSale = 0;
+        this.quantity = 0;
+        this.salePercent = 0;
+        this.size = body.getSize();
     }
 
+    public Product(String name, double price, String description, String size, int quantity) {
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.size = size;
+        this.createdDate = new Date();
+        this.quantity = quantity;
+    }
 
+    public void update(ClothesBody body){
+        this.name = body.getName();
+        this.price = body.getPrice();
+        this.description = body.getDescription();
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getCoverUrl() {
+        return coverUrl;
+    }
+
+    public void setCoverUrl(String coverUrl) {
+        this.coverUrl = coverUrl;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
 
     public String getId() {
         return id;
@@ -68,15 +113,29 @@ public class Clothes {
         this.createdDate = createdDate;
     }
 
-    public String getLogoUrl() {
-        return logoUrl;
+    public String getAvatarUrl() {
+        return avatarUrl;
     }
 
-    public void setLogoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
+    public int getIsSale() {
+        return isSale;
+    }
 
+    public void setIsSale(int isSale) {
+        this.isSale = isSale;
+    }
+
+    public float getSalePercent() {
+        return salePercent;
+    }
+
+    public void setSalePercent(float salePercent) {
+        this.salePercent = salePercent;
+    }
 
     public Set<RateClothes> getRateClothes() {
         return rateClothes;
@@ -86,11 +145,11 @@ public class Clothes {
         this.rateClothes = rateClothes;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -113,12 +172,15 @@ public class Clothes {
     public int getTotalSave() {
         return totalSave;
     }
+
     public void addSave(){
         totalSave++;
     }
+
     public void subSave(){
         totalSave--;
     }
+
     public void setTotalSave(int totalSave) {
         this.totalSave = totalSave;
     }

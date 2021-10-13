@@ -1,21 +1,21 @@
 package net.codejava.store.customer.models.view;
 
 
-import net.codejava.store.customer.models.data.Order;
+import net.codejava.store.customer.models.data.CustomerOrder;
 
-public class OrderPreview {
+public class CustomerOrderPreview {
     private String id;
     private String name;
-    private int price;
+    private double price;
     private String logoUrl;
     private long createdDate;
     private int amount;
 
-    public OrderPreview(Order order) {
+    public CustomerOrderPreview(CustomerOrder order) {
         setId(order.getClothes().getId());
         setName(order.getClothes().getName());
         setPrice(order.getClothes().getPrice());
-        setLogoUrl(order.getClothes().getLogoUrl());
+        setLogoUrl(order.getClothes().getAvatarUrl());
         setCreatedDate(order.getCreatDate().getTime());
         setAmount(order.getAmount());
     }
@@ -44,11 +44,11 @@ public class OrderPreview {
         this.name = name;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 

@@ -4,7 +4,7 @@ public class ClothesBody {
     private String name;
     private int price;
     private String description;
-    private String logoUrl;
+    private String size;
 
     public String getName() {
         return name;
@@ -30,12 +30,12 @@ public class ClothesBody {
         this.description = description;
     }
 
-    public String getLogoUrl() {
-        return logoUrl;
+    public String getSize() {
+        return size;
     }
 
-    public void setLogoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
+    public void setSize(String logoUrl) {
+        this.size = logoUrl;
     }
 
 

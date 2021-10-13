@@ -17,7 +17,7 @@ public class RateClothes {
     private String id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clothesID")
-    private Clothes clothes;
+    private Product product;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customerID")
     private Customer customer;
@@ -47,12 +47,12 @@ public class RateClothes {
         this.id = id;
     }
 
-    public Clothes getClothes() {
-        return clothes;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setClothes(Clothes clothes) {
-        this.clothes = clothes;
+    public void setClothes(Product product) {
+        this.product = product;
     }
 
     public Customer getCustomer() {

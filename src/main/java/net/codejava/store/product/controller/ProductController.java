@@ -9,16 +9,12 @@ import net.codejava.store.customer.dao.CustomerRespository;
 import net.codejava.store.customer.dao.SaveClothesRepository;
 import net.codejava.store.customer.models.data.Customer;
 import net.codejava.store.product.dao.CategoryRepository;
-import net.codejava.store.product.dao.ClothesRepository;
+import net.codejava.store.product.dao.ProductsRepository;
 import net.codejava.store.product.dao.RateClothesRepository;
 import net.codejava.store.product.models.body.ClothesBody;
-import net.codejava.store.product.models.body.RateClothesBody;
-import net.codejava.store.product.models.data.Category;
-import net.codejava.store.product.models.data.Clothes;
-import net.codejava.store.product.models.data.RateClothes;
-import net.codejava.store.product.models.data.SaveClothes;
-import net.codejava.store.product.models.view.ClothesPreview;
-import net.codejava.store.product.models.view.ClothesViewModel;
+import net.codejava.store.product.models.data.*;
+import net.codejava.store.product.models.view.ProductPreview;
+import net.codejava.store.product.models.view.ProductViewModel;
 import net.codejava.store.product.models.view.RateClothesViewModel;
 import net.codejava.store.response_model.*;
 import net.codejava.store.utils.PageAndSortRequestBuilder;
@@ -39,7 +35,7 @@ public class ProductController {
     @Autowired
     private CategoryRepository categoryRepository;
     @Autowired
-    private ClothesRepository clothesRepository;
+    private ProductsRepository productsRepository;
     @Autowired
     private SaveClothesRepository saveClothesRepository;
     @Autowired
@@ -52,14 +48,14 @@ public class ProductController {
 
     /**********************Clothes********************/
     @ApiOperation(value = "Lấy toàn bộ sản phẩm quần áo", response = Iterable.class)
-    @GetMapping("/clothes")
+    @GetMapping("/categorys/0")
     public Response getAllClothes(
             @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
             @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
             @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
-            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Clothes.CREATED_DATE)
-            @RequestParam(value = "sortBy", defaultValue = Clothes.CREATED_DATE) String sortBy,
+            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Product.CREATED_DATE)
+            @RequestParam(value = "sortBy", defaultValue = Product.CREATED_DATE) String sortBy,
             @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
             @RequestParam(value = "sortType", defaultValue = "desc") String sortType
     ) {
@@ -67,8 +63,33 @@ public class ProductController {
 
         try {
             Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-            Page<ClothesPreview> clothesPreviews = clothesRepository.getAllClothesPreviews(pageable);
+            Page<ProductPreview> clothesPreviews = productsRepository.getAllClothesPreviews(pageable);
             response = new OkResponse(clothesPreviews);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
+    @GetMapping("/categorys/{id}")
+    public Response getProductBySubCate(
+            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
+            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Product.CREATED_DATE)
+            @RequestParam(value = "sortBy", defaultValue = Product.CREATED_DATE) String sortBy,
+            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
+            @RequestParam(value = "sortType", defaultValue = "desc") String sortType,
+            @PathVariable("id") String id
+    ) {
+        Response response;
+
+        try {
+            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+            Page<ProductPreview> productPreviews = productsRepository.getProductByCategory(pageable, id);
+            response = new OkResponse(productPreviews);
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
@@ -87,13 +108,13 @@ public class ProductController {
             if (customer == null) {
                 return new NotFoundResponse("Customer not Exist");
             }
-            Clothes clothes = clothesRepository.findById(clothesID);
-            if (clothes == null) {
+            Product product = productsRepository.findById(clothesID);
+            if (product == null) {
                 return new NotFoundResponse("Clothes not Exist");
             }
-            ClothesViewModel clothesViewModel = clothesRepository.getClothesViewModel(clothesID);
-            clothesViewModel.setIsSaved(saveClothesRepository.existsByCustomer_IdAndClothes_Id(customerID, clothesID));
-            response = new OkResponse(clothesViewModel);
+            ProductViewModel productViewModel = productsRepository.getClothesViewModel(clothesID);
+            productViewModel.setIsSaved(saveClothesRepository.existsByCustomer_IdAndClothes_Id(customerID, clothesID));
+            response = new OkResponse(productViewModel);
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
@@ -106,13 +127,13 @@ public class ProductController {
             @PathVariable("id") String clothesID) {
         Response response;
         try {
-            Clothes clothes = clothesRepository.findById(clothesID);
-            if (clothes == null) {
+            Product product = productsRepository.findById(clothesID);
+            if (product == null) {
                 return new NotFoundResponse("Clothes not Exist");
             }
-            ClothesViewModel clothesViewModel = clothesRepository.getClothesViewModel(clothesID);
-            clothesViewModel.setIsSaved(false);
-            response = new OkResponse(clothesViewModel);
+            ProductViewModel productViewModel = productsRepository.getClothesViewModel(clothesID);
+            productViewModel.setIsSaved(false);
+            response = new OkResponse(productViewModel);
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
@@ -130,9 +151,9 @@ public class ProductController {
         if (category == null) {
             return new NotFoundResponse("Category not Exist");
         }
-        Clothes clothes = new Clothes(clothesBody);
-        clothes.setCategory(category);
-        clothesRepository.save(clothes);
+        Product product = new Product(clothesBody);
+        product.setCategory(category);
+        productsRepository.save(product);
         return new OkResponse();
     }
 
@@ -144,18 +165,18 @@ public class ProductController {
                                       @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
                                       @ApiParam(name = "pageSize", value = "Kích thước trang, mặc định và tối đa là " + Constant.MAX_PAGE_SIZE)
                                       @RequestParam(value = "pageSize", required = false) Integer pageSize,
-                                      @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Clothes.CREATED_DATE)
-                                      @RequestParam(value = "sortBy", defaultValue = Clothes.CREATED_DATE) String sortBy,
+                                      @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Product.CREATED_DATE)
+                                      @RequestParam(value = "sortBy", defaultValue = Product.CREATED_DATE) String sortBy,
                                       @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
                                       @RequestParam(value = "sortType", defaultValue = "desc") String sortType) {
         Response response;
         try {
-            Clothes clothes = clothesRepository.findOne(clothesID);
-            if (clothes == null) {
+            Product product = productsRepository.findOne(clothesID);
+            if (product == null) {
                 return new NotFoundResponse("Clothes not Exist");
             }
             Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-            Page<ClothesPreview> clothesPreviews = clothesRepository.getSimilarClothesPreviews(pageable, clothes.getCategory().getId());
+            Page<ProductPreview> clothesPreviews = productsRepository.getSimilarClothesPreviews(pageable, product.getCategory().getId());
             response = new OkResponse(clothesPreviews);
         } catch (Exception e) {
             e.printStackTrace();
@@ -175,7 +196,7 @@ public class ProductController {
             if (customer == null) {
                 return new NotFoundResponse();
             }
-            Clothes clothes = clothesRepository.findById(clothesID);
+            Product clothes = productsRepository.findById(clothesID);
             if (clothes == null) {
                 return new NotFoundResponse("Clothes not Exist");
             }
@@ -201,16 +222,16 @@ public class ProductController {
             if (customer == null) {
                 return new NotFoundResponse();
             }
-            Clothes clothes = clothesRepository.findOne(clothesID);
-            if (clothes == null) {
+            Product product = productsRepository.findOne(clothesID);
+            if (product == null) {
                 return new NotFoundResponse("Clothes not Exist");
             }
             if (!saveClothesRepository.existsByCustomer_IdAndClothes_Id(customerID, clothesID)) {
                 return new ResourceExistResponse();
             }
 
-            clothes.subSave();
-            clothesRepository.save(clothes);
+            product.subSave();
+            productsRepository.save(product);
             saveClothesRepository.deleteByCustomer_idAndAndClothes_Id(clothesID, customer.getId());
             response = new OkResponse();
         } catch (Exception e) {
@@ -223,36 +244,6 @@ public class ProductController {
 
     /**********************rateClothes********************/
     @ApiOperation(value = "Api đánh giá sản phẩm", response = Iterable.class)
-    @PutMapping("/{customerID}/rateClothes/{id}")
-    public Response rateClothes(@PathVariable("customerID") String customerID,
-                                @PathVariable("id") String clothesID,
-                                @RequestBody RateClothesBody body) {
-        Customer customer = customerRespository.findOne(customerID);
-        if (customer == null) {
-            return new NotFoundResponse("Customer not Exist");
-        }
-        Clothes clothes = clothesRepository.findById(clothesID);
-        if (clothes == null) {
-            return new NotFoundResponse("Clothes not Exist");
-        }
-
-        if (rateClothesRepository.existsByCustomerIdAndClothesId(customerID, clothesID)) {
-            RateClothes rateClothes = rateClothesRepository.findByClothes_IdAndCustomer_Id(clothesID, customerID);
-            rateClothes.update(body);
-            rateClothesRepository.save(rateClothes);
-        } else {
-            RateClothes rateClothes = new RateClothes(body);
-            rateClothes.setCustomer(customer);
-            rateClothes.setClothes(clothes);
-            rateClothesRepository.save(rateClothes);
-        }
-
-//        Sort sort =
-//                PageAndSortRequestBuilder.createSortRequest(RateClothes.RATE_DATE,"desc");
-//        List<RateClothesViewModel> rateClothesViewModels = rateClothesRepository.getAllRate(clothesID,sort);
-        return new OkResponse();
-    }
-    @ApiOperation(value = "Api đánh giá sản phẩm", response = Iterable.class)
     @GetMapping("/rateClothes/{id}")
     public Response getAllRateClothes(@PathVariable("id") String clothesID,
                                       @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + RateClothes.RATE_DATE)
@@ -260,8 +251,8 @@ public class ProductController {
                                       @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
                                       @RequestParam(value = "sortType", defaultValue = "desc") String sortType) {
 
-        Clothes clothes = clothesRepository.findById(clothesID);
-        if (clothes == null) {
+        Product product = productsRepository.findById(clothesID);
+        if (product == null) {
             return new NotFoundResponse("Clothes not Exist");
         }
 

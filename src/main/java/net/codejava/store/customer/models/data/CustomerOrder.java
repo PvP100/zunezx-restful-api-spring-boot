@@ -2,7 +2,7 @@ package net.codejava.store.customer.models.data;
 
 import net.codejava.store.customer.models.body.OrderBody;
 import net.codejava.store.customer.models.body.SetOrderBody;
-import net.codejava.store.product.models.data.Clothes;
+import net.codejava.store.product.models.data.Product;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "customer_order")
-public class Order {
+public class CustomerOrder {
     public static final String CREATED_DATE = "creatDate";
     @Id
     @GenericGenerator(name = "uuid", strategy = "uuid2")
@@ -18,7 +18,7 @@ public class Order {
     private String id;
     @OneToOne
     @JoinColumn(name = "clothesID")
-    private Clothes clothes;
+    private Product product;
     @OneToOne
     @JoinColumn(name = "customerID")
     private Customer customer;
@@ -28,21 +28,21 @@ public class Order {
     private int price;
     private Date creatDate;
 
-    public Order() {
+    public CustomerOrder() {
     }
 
-    public Order(Clothes clothes, Customer customer, OrderBody orderBody) {
+    public CustomerOrder(Product product, Customer customer, OrderBody orderBody) {
         setColor(orderBody.getColor());
         setAmount(orderBody.getAmount());
-        setClothes(clothes);
+        setClothes(product);
         setCustomer(customer);
         setSize(orderBody.getSize());
         setCreatDate(new Date());
         setPrice(orderBody.getPrice());
     }
-    public Order(Clothes clothes,Customer customer, SetOrderBody orderBody) {
+    public CustomerOrder(Product product, Customer customer, SetOrderBody orderBody) {
         setColor(orderBody.getColor());
-        setClothes(clothes);
+        setClothes(product);
         setAmount(orderBody.getAmount());
         setCustomer(customer);
         setSize(orderBody.getSize());
@@ -67,12 +67,12 @@ public class Order {
         this.id = id;
     }
 
-    public Clothes getClothes() {
-        return clothes;
+    public Product getClothes() {
+        return product;
     }
 
-    public void setClothes(Clothes clothes) {
-        this.clothes = clothes;
+    public void setClothes(Product product) {
+        this.product = product;
     }
 
     public Customer getCustomer() {
