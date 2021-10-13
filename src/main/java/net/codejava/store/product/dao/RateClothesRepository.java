@@ -12,7 +12,7 @@ public interface RateClothesRepository extends JpaRepository<RateClothes, String
     boolean existsByCustomerIdAndClothesId(String customerID, String clothesID);
 
     @Query("select new net.codejava.store.product.models.view.RateClothesViewModel(r) " +
-            "from RateClothes r where r.clothes.id = ?1")
+            "from RateClothes r where r.product.id = ?1")
     List<RateClothesViewModel> getAllRate(String clothesID, Sort pageable);
 
     RateClothes findByClothes_IdAndCustomer_Id(String clothesID,String customerID);

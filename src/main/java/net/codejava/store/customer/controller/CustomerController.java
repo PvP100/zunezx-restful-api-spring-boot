@@ -21,6 +21,7 @@ import net.codejava.store.customer.models.view.HeaderProfile;
 import net.codejava.store.customer.models.view.CustomerOrderPreview;
 import net.codejava.store.customer.models.view.Profile;
 import net.codejava.store.customer.models.view.SaveClothesPreview;
+import net.codejava.store.product.dao.CustomerOrderRepository;
 import net.codejava.store.product.dao.ProductsRepository;
 import net.codejava.store.product.dao.OrderRepository;
 import net.codejava.store.product.models.data.Product;
@@ -54,7 +55,7 @@ public class CustomerController {
     @Autowired
     SaveClothesRepository saveClothesRepository;
     @Autowired
-    private OrderRepository orderRepository;
+    private CustomerOrderRepository orderRepository;
 
     @ApiOperation(value = "Lấy Lấy avatar + email + tên Khách hàng", response = Iterable.class)
     @GetMapping("/headerProfiles/{id}")
