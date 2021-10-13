@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CategoryRepository extends JpaRepository<Category, String> {
 
-    @Query("select new com.ptit.edu.store.product.models.view.CategoryView(c) " +
+    @Query("select new net.codejava.store.product.models.view.CategoryView(c) " +
             " from Category c ")
     Page<CategoryView> getAllCategory(Pageable pageable);
 
