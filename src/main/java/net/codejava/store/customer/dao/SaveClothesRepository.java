@@ -15,7 +15,7 @@ public interface SaveClothesRepository extends JpaRepository<SaveClothes, String
 
     @Transactional
     @Modifying
-    int deleteByCustomer_idAndAndClothes_Id(String customerID,String clothesID);
+    int deleteByCustomer_idAndProduct_Id(String customerID,String clothesID);
 
 
     @Query("select new net.codejava.store.customer.models.view.SaveClothesPreview(sc) " +
@@ -23,6 +23,6 @@ public interface SaveClothesRepository extends JpaRepository<SaveClothes, String
             " where sc.customer.id = ?1")
     Page<SaveClothesPreview> getAllSavedClothes(String customerID, Pageable pageable);
 
-    boolean existsByCustomer_IdAndClothes_Id(String customerID, String clothesID);
+    boolean existsByCustomer_IdAndProduct_Id(String customerID, String clothesID);
 
 }

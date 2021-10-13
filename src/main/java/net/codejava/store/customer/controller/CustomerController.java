@@ -120,7 +120,7 @@ public class CustomerController {
                 return new NotFoundResponse("Customer not Exist");
             }
 
-            if(saveClothesRepository.existsByCustomer_IdAndClothes_Id(customerID,clothesID)){
+            if(saveClothesRepository.existsByCustomer_IdAndProduct_Id(customerID,clothesID)){
                 response = new OkResponse(true);
             }else {
                 response = new OkResponse(false);
@@ -294,7 +294,7 @@ public class CustomerController {
 
             product.subSave();
             productsRepository.save(product);
-            saveClothesRepository.deleteByCustomer_idAndAndClothes_Id(customer.getId(), clothesID);
+            saveClothesRepository.deleteByCustomer_idAndProduct_Id(customer.getId(), clothesID);
 
             Pageable pageable = PageAndSortRequestBuilder
                     .createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);

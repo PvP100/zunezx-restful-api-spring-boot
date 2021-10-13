@@ -22,13 +22,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.sql.Blob;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
-@Api(value = "candidate-api", description = "Nhóm API Customer, Yêu cầu access token của Khách hàng")
+@Api(value = "candidate-api", description = "Nhóm API Product")
 @CrossOrigin(origins = "*")
 public class ProductController {
 
@@ -45,6 +49,8 @@ public class ProductController {
     @Autowired
     private RateClothesRepository rateClothesRepository;
 
+    //    @Value("${file.upload-dir}")
+    String FILE_DIRECTORY = "D:\\AndroidProjects-4.2\\Zunezx\\API\\store\\ptit.store\\src\\main\\resources\\static\\uploadImages";
 
     /**********************Clothes********************/
     @ApiOperation(value = "Lấy toàn bộ sản phẩm quần áo", response = Iterable.class)
@@ -72,6 +78,29 @@ public class ProductController {
         return response;
     }
 
+//    @GetMapping("/subcate")
+//    public Response getSubCategory(
+//            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
+//            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+//            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+//            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+//            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Product.CREATED_DATE)
+//            @RequestParam(value = "sortBy", defaultValue = Product.CREATED_DATE) String sortBy,
+//            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
+//            @RequestParam(value = "sortType", defaultValue = "desc") String sortType
+//    ) {
+//        Response response;
+//
+//        try {
+//            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+//            Page<CategoryPreview> clothesPreviews = productsRepository.getSubCate(pageable);
+//            response = new OkResponse(clothesPreviews);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
     @GetMapping("/categorys/{id}")
     public Response getProductBySubCate(
             @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
@@ -88,14 +117,15 @@ public class ProductController {
 
         try {
             Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-            Page<ProductPreview> productPreviews = productsRepository.getProductByCategory(pageable, id);
-            response = new OkResponse(productPreviews);
+            Page<ProductPreview> clothesPreviews = productsRepository.getProductByCategory(pageable, id);
+            response = new OkResponse(clothesPreviews);
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
         }
         return response;
     }
+
 
     /**********************detailClothes********************/
     @ApiOperation(value = "Lấy chi tiết sản phẩm", response = Iterable.class)
@@ -112,16 +142,16 @@ public class ProductController {
             if (product == null) {
                 return new NotFoundResponse("Clothes not Exist");
             }
-            ProductViewModel productViewModel = productsRepository.getClothesViewModel(clothesID);
-            productViewModel.setIsSaved(saveClothesRepository.existsByCustomer_IdAndClothes_Id(customerID, clothesID));
-            response = new OkResponse(productViewModel);
+            ProductViewModel clothesViewModel = productsRepository.getClothesViewModel(clothesID);
+            clothesViewModel.setIsSaved(saveClothesRepository.existsByCustomer_IdAndProduct_Id(customerID, clothesID));
+            response = new OkResponse(clothesViewModel);
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
         }
         return response;
     }
-
+    @ApiOperation(value = "Lấy chi tiết sản phẩm", response = Iterable.class)
     @GetMapping("clothes/{id}")
     public Response getDetailClothesWithoutAuth(
             @PathVariable("id") String clothesID) {
@@ -131,9 +161,8 @@ public class ProductController {
             if (product == null) {
                 return new NotFoundResponse("Clothes not Exist");
             }
-            ProductViewModel productViewModel = productsRepository.getClothesViewModel(clothesID);
-            productViewModel.setIsSaved(false);
-            response = new OkResponse(productViewModel);
+            ProductViewModel clothesViewModel = productsRepository.getClothesViewModel(clothesID);
+            response = new OkResponse(clothesViewModel);
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
@@ -141,20 +170,122 @@ public class ProductController {
         return response;
     }
 
+//    @ApiOperation(value = "api Thêm mới sản phẩm quần áo", response = Iterable.class)
+//    @RequestMapping(path = "/clothes/{id}", method = RequestMethod.POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+//    public Response insertClothes(@PathVariable("id") String categoryID,
+//                                  @RequestParam(value = "name",required = true) String name,
+//                                  @RequestParam(value = "description",required = true) String description,
+//                                  @RequestParam(value = "price",required = true) double price,
+//                                  @RequestParam(value = "size",required = true) String size,
+//                                  @RequestParam(value = "quantity",required = true) int quantity,
+//                                  @RequestParam(value = "avatar",required = true) MultipartFile avatar,
+//                                  @RequestParam(value = "cover",required = true) MultipartFile cover) {
+//        Category category = categoryRepository.findOne(categoryID);
+//        if (category == null) {
+//            return new NotFoundResponse("Category not Exist");
+//        }
+//
+//        Product product = new Product(name, price, description, size, quantity);
+//        product.setCategory(category);
+//        productsRepository.save(product);
+//        if(avatar != null && cover != null){
+//            try {
+//                String productID = productsRepository.getProductByName(name);
+//                String avatarUrl = uploadFile("products/" + productID, productID + "_avatar.jpg",
+//                        avatar.getBytes(), "image/jpeg");
+//                String coverUrl = uploadFile("products/" + productID, productID + "_cover.jpg",
+//                        cover.getBytes(), "image/jpeg");
+//                Product product1 = productsRepository.getOne(productID);
+//                product1.setAvatarUrl(avatarUrl);
+//                product1.setCoverUrl(coverUrl);
+//                productsRepository.save(product1);
+//            }catch (IOException e) {
+//                e.printStackTrace();
+//                return new ResourceExistResponse("tên sản phẩm đã tồn tại");
+//            }
+//        }
+//
+//        return new OkResponse();
+//    }
 
+//    public static String uploadFile(String dir, String fileName,
+//                                    byte[] data,
+//                                    String contentType) throws StorageException {
+//        Blob avatarFile = StorageClient.getInstance()
+//                .bucket()
+//                .create(dir+"/"+fileName, data, contentType);
+//        return getDownloadUrl(avatarFile.getBucket(), avatarFile.getName());
+//    }
 
-    @ApiOperation(value = "api Thêm mới sản phẩm quần áo", response = Iterable.class)
-    @PutMapping("/clothes/{id}")
-    public Response insertClothes(@PathVariable("id") String categoryID,
-                                  @RequestBody ClothesBody clothesBody) {
-        Category category = categoryRepository.findOne(categoryID);
-        if (category == null) {
-            return new NotFoundResponse("Category not Exist");
+    public static String getDownloadUrl(String bucketUrl, String fileName) {
+        return "http://storage.googleapis.com/" + bucketUrl + "/" + fileName;
+    }
+
+//    @ApiOperation(value = "api update sản phẩm", response = Iterable.class)
+//    @RequestMapping(path = "/updateclothes/{productID}", method = RequestMethod.PUT, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+//    public Response updateClothes(@PathVariable("productID") String productID,
+//                                  @RequestParam(value = "name",required = false) String name,
+//                                  @RequestParam(value = "description",required = false) String description,
+//                                  @RequestParam(value = "price",required = false) double price,
+//                                  @RequestParam(value = "size",required = false) String size,
+//                                  @RequestParam(value = "quantity",required = false) int quantity,
+//                                  @RequestParam(value = "avatar",required = false) MultipartFile avatar,
+//                                  @RequestParam(value = "cover",required = false) MultipartFile cover) {
+//        Product product = productsRepository.findOne(productID);
+//        if (product == null) {
+//            return new NotFoundResponse("Clothes not Exist");
+//        }
+//        try {
+//            if (name != null) product.setName(name);
+//            if (description != null) product.setDescription(description);
+//            if (price != -1) product.setPrice(price);
+//            if (quantity != -1) product.setQuantity(quantity);
+//            if (size != null) product.setSize(size);
+//            if (avatar != null){
+//                String avatarUrl = uploadFile("products/" + productID, productID + "_avatar.jpg",
+//                        avatar.getBytes(), "image/jpeg");
+//                product.setAvatarUrl(avatarUrl);
+//            }
+//            if (cover != null){
+//                String coverUrl = uploadFile("products/" + productID, productID + "_cover.jpg",
+//                        cover.getBytes(), "image/jpeg");
+//                product.setCoverUrl(coverUrl);
+//            }
+//            productsRepository.save(product);
+//        } catch (IOException e){
+//            e.printStackTrace();
+//            return new ServerErrorResponse();
+//        }
+//
+//        return new OkResponse();
+//    }
+
+    @ApiOperation(value = "api xóa sản phẩm như cách tôi làm lại cuộc đời", response = Iterable.class)
+    @PostMapping("/deleteclothes/")
+    public Response deleteClothes(String id) {
+        Response response;
+        try {
+            productsRepository.delete(id);
+            response = new OkResponse();
+        } catch (Exception e){
+            e.printStackTrace();
+            response = new ServerErrorResponse();
         }
-        Product product = new Product(clothesBody);
-        product.setCategory(category);
-        productsRepository.save(product);
-        return new OkResponse();
+        return response;
+    }
+
+    @ApiOperation(value = "api search product", response = Iterable.class)
+    @PostMapping("/countsubcate/")
+    public Response countBySubCate(String des) {
+        Response response;
+        try {
+            Long x = productsRepository.countByDescription(des);
+            response = new OkResponse(x);
+        } catch (Exception e){
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
     }
 
     /**********************similarClothes********************/
@@ -196,15 +327,15 @@ public class ProductController {
             if (customer == null) {
                 return new NotFoundResponse();
             }
-            Product clothes = productsRepository.findById(clothesID);
-            if (clothes == null) {
+            Product product = productsRepository.findById(clothesID);
+            if (product == null) {
                 return new NotFoundResponse("Clothes not Exist");
             }
-            if (saveClothesRepository.existsByCustomer_IdAndClothes_Id(customerID, clothesID)) {
+            if (saveClothesRepository.existsByCustomer_IdAndProduct_Id(customerID, clothesID)) {
                 return new ResourceExistResponse();
             }
-            clothes.addSave();
-            saveClothesRepository.save(new SaveClothes(clothes, customer));
+            product.addSave();
+            saveClothesRepository.save(new SaveClothes(product, customer));
             response = new OkResponse();
         } catch (Exception e) {
             e.printStackTrace();
@@ -226,13 +357,13 @@ public class ProductController {
             if (product == null) {
                 return new NotFoundResponse("Clothes not Exist");
             }
-            if (!saveClothesRepository.existsByCustomer_IdAndClothes_Id(customerID, clothesID)) {
+            if (!saveClothesRepository.existsByCustomer_IdAndProduct_Id(customerID, clothesID)) {
                 return new ResourceExistResponse();
             }
 
             product.subSave();
             productsRepository.save(product);
-            saveClothesRepository.deleteByCustomer_idAndAndClothes_Id(clothesID, customer.getId());
+            saveClothesRepository.deleteByCustomer_idAndProduct_Id(clothesID, customer.getId());
             response = new OkResponse();
         } catch (Exception e) {
             e.printStackTrace();
@@ -240,46 +371,10 @@ public class ProductController {
         }
         return response;
 
-    }
-
-    /**********************rateClothes********************/
-    @ApiOperation(value = "Api đánh giá sản phẩm", response = Iterable.class)
-    @GetMapping("/rateClothes/{id}")
-    public Response getAllRateClothes(@PathVariable("id") String clothesID,
-                                      @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + RateClothes.RATE_DATE)
-                                      @RequestParam(value = "sortBy", defaultValue = RateClothes.RATE_DATE) String sortBy,
-                                      @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
-                                      @RequestParam(value = "sortType", defaultValue = "desc") String sortType) {
-
-        Product product = productsRepository.findById(clothesID);
-        if (product == null) {
-            return new NotFoundResponse("Clothes not Exist");
-        }
-
-        Sort sort =
-                PageAndSortRequestBuilder.createSortRequest(sortBy, sortType);
-        List<RateClothesViewModel> rateClothesViewModels = rateClothesRepository.getAllRate(clothesID, sort);
-        return new OkResponse(rateClothesViewModels);
     }
 
     /**********************Clothes********************/
-    @PostMapping("/categorys")
-    @ApiOperation(value = "api thêm 1 danh mục sản phẩm", response = Iterable.class)
-    @PutMapping("/categorys")
-    public Response insertCategory(@RequestBody String body) {
-        Response response;
-        try {
-            Category category = new Category();
-            category.setTitle(body);
-            categoryRepository.save(category);
-            response = new OkResponse();
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
 
-        return response;
-    }
     @ApiOperation(value = "Lấy tất cả danh mục sản phẩm", response = Iterable.class)
     @GetMapping("/category")
     public Response getAllCategory() {
