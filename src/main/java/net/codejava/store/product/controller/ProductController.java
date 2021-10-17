@@ -13,6 +13,7 @@ import net.codejava.store.product.dao.ProductsRepository;
 import net.codejava.store.product.dao.RateClothesRepository;
 import net.codejava.store.product.models.body.ClothesBody;
 import net.codejava.store.product.models.data.*;
+import net.codejava.store.product.models.view.CategoryPreview;
 import net.codejava.store.product.models.view.ProductPreview;
 import net.codejava.store.product.models.view.ProductViewModel;
 import net.codejava.store.product.models.view.RateClothesViewModel;
@@ -78,29 +79,29 @@ public class ProductController {
         return response;
     }
 
-//    @GetMapping("/subcate")
-//    public Response getSubCategory(
-//            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
-//            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
-//            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
-//            @RequestParam(value = "pageSize", required = false) Integer pageSize,
-//            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Product.CREATED_DATE)
-//            @RequestParam(value = "sortBy", defaultValue = Product.CREATED_DATE) String sortBy,
-//            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
-//            @RequestParam(value = "sortType", defaultValue = "desc") String sortType
-//    ) {
-//        Response response;
-//
-//        try {
-//            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-//            Page<CategoryPreview> clothesPreviews = productsRepository.getSubCate(pageable);
-//            response = new OkResponse(clothesPreviews);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            response = new ServerErrorResponse();
-//        }
-//        return response;
-//    }
+    @GetMapping("/subcate")
+    public Response getSubCategory(
+            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
+            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Product.CREATED_DATE)
+            @RequestParam(value = "sortBy", defaultValue = Product.CREATED_DATE) String sortBy,
+            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
+            @RequestParam(value = "sortType", defaultValue = "desc") String sortType
+    ) {
+        Response response;
+
+        try {
+            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+            Page<CategoryPreview> clothesPreviews = productsRepository.getSubCate(pageable);
+            response = new OkResponse(clothesPreviews);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
     @GetMapping("/categorys/{id}")
     public Response getProductBySubCate(
             @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
@@ -274,14 +275,42 @@ public class ProductController {
         return response;
     }
 
+//    @ApiOperation(value = "api search product", response = Iterable.class)
+//    @PostMapping("/countsubcate/")
+//    public Response countBySubCate(String des) {
+//        Response response;
+//        try {
+//            Long x = productsRepository.countByDescription(des);
+//            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+//            Page<ProductPreview> productPreviews = productsRepository.searchByName(pa)
+//            response = new OkResponse(x);
+//        } catch (Exception e){
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
+
     @ApiOperation(value = "api search product", response = Iterable.class)
-    @PostMapping("/countsubcate/")
-    public Response countBySubCate(String des) {
+    @GetMapping("/searchProduct/{productName}")
+    public Response searchProduct(
+            @PathVariable("productName") String productName,
+            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
+            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Product.CREATED_DATE)
+            @RequestParam(value = "sortBy", defaultValue = Product.CREATED_DATE) String sortBy,
+            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
+            @RequestParam(value = "sortType", defaultValue = "desc") String sortType
+    ) {
         Response response;
+
         try {
-            Long x = productsRepository.countByDescription(des);
-            response = new OkResponse(x);
-        } catch (Exception e){
+            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+            Page<ProductPreview> clothesPreviews = productsRepository.searchByName(pageable, productName);
+            response = new OkResponse(clothesPreviews);
+        } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
         }
@@ -385,3 +414,4 @@ public class ProductController {
 //        return userRespository.findByUsername(userEmail);
 //    }
 }
+

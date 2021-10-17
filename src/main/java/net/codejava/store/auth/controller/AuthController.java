@@ -40,7 +40,7 @@ public class AuthController {
     AdminRepository adminRepository;
     @ApiOperation(value = "api đăng nhập cho khách hàng", response = Iterable.class)
     @PostMapping("/customer/login")
-    public Response CustomerLogin(@ApiParam(name = "encodedString", value = "username+\":\"+password, lấy kết quả encode theo Base64, sau đó thêm \"Basic \" + kết quả")
+    public Response CustomerLogin(@ApiParam(name = "Authorization", value = "username+\":\"+password, lấy kết quả encode theo Base64, sau đó thêm \"Basic \" + kết quả")
                                   @RequestHeader(HeaderConstant.AUTHORIZATION) String encodedString,
                                   @RequestBody String fcmToken) {
         Response response;
@@ -119,36 +119,36 @@ public class AuthController {
         }
         return response;
     }
-    @PutMapping("facebook/register/{fcmToken}")
-    public Response FacebookRegister(@RequestBody FacebookLoginBody facebookLoginBody,
-                                     @PathVariable("fcmToken") String fcmToken) {
-        Response response;
-        try {
-            User user = userRespository.findByUsername(facebookLoginBody.getFacebookUserID());
-            HeaderProfile profile;
-            if (user == null) {
-                user = new User();
-                user.setUsername(facebookLoginBody.getFacebookUserID());
-                user.setPassword(new RandomString().nextString());
-                user.setActived(true);
-                user.setFcmToken(fcmToken);
-                user = userRespository.save(user);
-
-                Customer customer = new Customer(facebookLoginBody);
-                customer.setUser(user);
-                customer = customerRespository.save(customer);
-                profile = new HeaderProfile(customer.getId(), customer.getFullName(),
-                        customer.getAvatarUrl(), customer.getEmail());
-                return new OkResponse(profile);
-            }else {
-                return new ResourceExistResponse("Account existed !");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @PutMapping("facebook/register/{fcmToken}")
+//    public Response FacebookRegister(@RequestBody FacebookLoginBody facebookLoginBody,
+//                                     @PathVariable("fcmToken") String fcmToken) {
+//        Response response;
+//        try {
+//            User user = userRespository.findByUsername(facebookLoginBody.getFacebookUserID());
+//            HeaderProfile profile;
+//            if (user == null) {
+//                user = new User();
+//                user.setUsername(facebookLoginBody.getFacebookUserID());
+//                user.setPassword(new RandomString().nextString());
+//                user.setActived(true);
+//                user.setFcmToken(fcmToken);
+//                user = userRespository.save(user);
+//
+//                Customer customer = new Customer(facebookLoginBody);
+//                customer.setUser(user);
+//                customer = customerRespository.save(customer);
+//                profile = new HeaderProfile(customer.getId(), customer.getFullName(),
+//                        customer.getAvatarUrl(), customer.getEmail());
+//                return new OkResponse(profile);
+//            }else {
+//                return new ResourceExistResponse("Account existed !");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
     @PostMapping("facebook/login/state")
     public Response checkFacebookLoginState(@RequestBody String facebookUserID) {
@@ -173,8 +173,8 @@ public class AuthController {
     @PostMapping("/customers/register")
     public Response register(@ApiParam(name = HeaderConstant.AUTHORIZATION,
             value = "username+\":\"+password, lấy kết quả encode theo Base64, sau đó thêm \"Basic \" + kết quả", required = true)
-                             @RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString, @ApiParam(name = "customerRegisterBody", value = "Tên đầy đủ KH", required = false)
-                             @Valid @RequestBody CustomerRegisterBody customerRegisterBody) {
+                             @RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString, @ApiParam(name = "customerRegisterBody", value = "Tên đầy đủ KH", required = true)
+                             @Valid @RequestBody Customer customerRegisterBody) {
         Response response;
         try {
             User u = UserDecodeUtils.decodeFromAuthorizationHeader(encodedString);
@@ -190,16 +190,16 @@ public class AuthController {
                 user.setPassword(u.getPassword());
                 user.setUsername(u.getUsername());
                 user.setRole(RoleConstants.CUSTOMER);
-                user.setActived(false);
+                user.setActived(true);
 
                 userRespository.save(user);
 
-                Customer customer = new Customer();
+                Customer customer = customerRegisterBody;
                 customer.setUser(user);
-                customer.setFullName(customerRegisterBody.getFullName());
-                customer.setAddress(customerRegisterBody.getAddress());
-                customer.setPhone(customerRegisterBody.getPhone());
-
+//                customer.setFullName(customerRegisterBody.getFullName());
+//                customer.setAddress(customerRegisterBody.getAddress());
+//                customer.setPhone(customerRegisterBody.getPhone());
+//                customer.setEmail(customerRegisterBody.getEmail());
                 customerRespository.save(customer);
 
                 SendEmailUtils.sendEmailActiveAccount(u.getUsername());

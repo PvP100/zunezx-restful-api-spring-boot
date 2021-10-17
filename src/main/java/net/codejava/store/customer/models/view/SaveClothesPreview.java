@@ -1,6 +1,5 @@
 package net.codejava.store.customer.models.view;
 
-
 import net.codejava.store.product.models.data.SaveClothes;
 
 public class SaveClothesPreview {

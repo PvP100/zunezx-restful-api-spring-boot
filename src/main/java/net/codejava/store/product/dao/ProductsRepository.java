@@ -1,6 +1,7 @@
 package net.codejava.store.product.dao;
 
 import net.codejava.store.product.models.data.Product;
+import net.codejava.store.product.models.view.CategoryPreview;
 import net.codejava.store.product.models.view.ProductPreview;
 import net.codejava.store.product.models.view.ProductViewModel;
 import org.springframework.data.domain.Page;
@@ -16,9 +17,9 @@ public interface ProductsRepository extends JpaRepository<Product, String>{
             " from Product c ")
     Page<ProductPreview> getAllClothesPreviews(Pageable pageable);
 
-//    @Query("select new com.ptit.edu.store.product.models.view.CategoryPreview(c) " +
-//            " from Product c ")
-//    Page<CategoryPreview> getSubCate(Pageable pageable);
+    @Query("select new net.codejava.store.product.models.view.CategoryPreview(c) " +
+            " from Product c ")
+    Page<CategoryPreview> getSubCate(Pageable pageable);
 
     @Query("select new net.codejava.store.product.models.view.ProductPreview(c) " +
             " from Product c where c.description = ?1")
@@ -38,9 +39,8 @@ public interface ProductsRepository extends JpaRepository<Product, String>{
     String getProductByName(String name);
 
     @Query("select new net.codejava.store.product.models.view.ProductPreview(p) " +
-            "from Product p where p.name like ?1")
+            "from Product p where p.name like %?1%")
     Page<ProductPreview> searchByName(Pageable pageable,String name);
 
     long countByDescription(String description);
-
 }

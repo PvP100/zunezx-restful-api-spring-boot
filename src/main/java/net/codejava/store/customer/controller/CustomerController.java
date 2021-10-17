@@ -84,8 +84,8 @@ public class CustomerController {
         return response;
     }
 
-    @ApiOperation(value = "Lấy Lấy avatar + email + tên Khách hàng", response = Iterable.class)
-    @PutMapping("profiles/{id}")
+    @ApiOperation(value = "Update Profile", response = Iterable.class)
+    @PutMapping("updateProfile/{id}")
     Response updateProfile(@PathVariable("id") String customerID, @RequestBody ProfileBody profileBody) {
         Response response;
         try {
@@ -175,23 +175,6 @@ public class CustomerController {
         return response;
     }
 
-    //Cap nhat mo ta
-    @ApiOperation(value = "api Cập nhật mô tả khách hàng", response = Iterable.class)
-    @PostMapping("/{customerID}/description")
-    Response updateDescription(@PathVariable("customerID") String customerID, @RequestBody String description) {
-        Response response;
-        try {
-            if (customerRespository.findOne(customerID) == null) {
-                return new NotFoundResponse("Customer not exist");
-            }
-            customerRespository.updateDescription(customerID, description);
-            response = new OkResponse(description);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
 
     /**********************SaveClothes********************/
     @ApiOperation(value = "Api lưu sản phẩm", response = Iterable.class)
@@ -323,11 +306,11 @@ public class CustomerController {
 
             Product product = productsRepository.findOne(clothesID);
             if (product == null) {
-                return new NotFoundResponse("Customer not Exist");
+                return new NotFoundResponse("Clothes not Exist");
             }
 
-            CustomerOrder customerOrder = new CustomerOrder(product, customer, orderBody);
-            orderRepository.save(customerOrder);
+            CustomerOrder order = new CustomerOrder(product, customer, orderBody);
+            orderRepository.save(order);
             response = new OkResponse();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -349,8 +332,8 @@ public class CustomerController {
             for(SetOrderBody setOrderBody:orderBodies){
                 Product product = productsRepository.findOne(setOrderBody.getClothesID());
                 if(product !=null){
-                    CustomerOrder customerOrder = new CustomerOrder(product,customer,setOrderBody);
-                    orderRepository.save(customerOrder);
+                    CustomerOrder order = new CustomerOrder(product,customer,setOrderBody);
+                    orderRepository.save(order);
                 }
             }
             response = new OkResponse();

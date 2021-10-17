@@ -1,13 +1,38 @@
-package net.codejava.store.customer.models.body;
+package net.codejava.store.customer.models.view;
 
-public class ProfileBody {
+import net.codejava.store.customer.models.data.Customer;
+
+public class CustomerView {
+    private String id;
     private String fullName;
     private String phone;
+    private int gender;
     private String address;
     private String avatarUrl;
-    private int gender;
     private String birthday;
     private String email;
+
+    public CustomerView() {
+    }
+
+    public CustomerView(Customer customer) {
+        this.id = customer.getId();
+        this.fullName = customer.getFullName();
+        this.phone = customer.getPhone();
+        this.gender = customer.getGender();
+        this.address = customer.getAddress();
+        this.avatarUrl = customer.getAvatarUrl();
+        this.birthday = customer.getBirthday();
+        this.email = customer.getEmail();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getFullName() {
         return fullName;
@@ -25,6 +50,14 @@ public class ProfileBody {
         this.phone = phone;
     }
 
+    public int getGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
+    }
+
     public String getAddress() {
         return address;
     }
@@ -39,14 +72,6 @@ public class ProfileBody {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
-    }
-
-    public int getGender() {
-        return gender;
-    }
-
-    public void setGender(int gender) {
-        this.gender = gender;
     }
 
     public String getBirthday() {

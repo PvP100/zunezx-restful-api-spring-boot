@@ -1,8 +1,11 @@
 package net.codejava.store.customer.dao;
 
 import net.codejava.store.customer.models.data.Customer;
+import net.codejava.store.customer.models.view.CustomerView;
 import net.codejava.store.customer.models.view.HeaderProfile;
 import net.codejava.store.customer.models.view.Profile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,11 +20,10 @@ public interface CustomerRespository extends JpaRepository<Customer,String> {
     HeaderProfile getHeaderProfile(String id);
 
     @Query("select new net.codejava.store.customer.models.view.Profile(c)" +
-            "from Customer  c where c.id = ?1")
+            "from Customer c where c.id = ?1")
     Profile getProfile(String customerID);
 
-    @Transactional
-    @Modifying
-    @Query("update Customer c set c.description = ?2 where c.id = ?1")
-    void updateDescription(String customerID, String description);
+    @Query("select new net.codejava.store.customer.models.view.CustomerView(c) " +
+            " from Customer c ")
+    Page<CustomerView> getListCustomer(Pageable pageable);
 }

@@ -8,11 +8,9 @@ public class Profile {
     private String fullName;
     private String phone;
     private String address;
-    private String identityCard;
-    private String description;
     private String avatarUrl;
     private int gender;
-    private long birthday;
+    private String birthday;
     private String email;
 
     public Profile() {
@@ -31,16 +29,15 @@ public class Profile {
         this.fullName = customer.getFullName();
         this.phone = customer.getPhone();
         this.address = customer.getAddress();
-        this.identityCard = customer.getIdentityCard();
-        this.description = customer.getDescription();
         this.avatarUrl = customer.getAvatarUrl();
         this.gender = customer.getGender();
-        if (customer.getBirthday() == null) {
-            this.birthday = -1;
-        } else {
-            this.birthday = customer.getBirthday().getTime();
-
-        }
+        this.birthday = customer.getBirthday();
+//        if (customer.getBirthday() == null) {
+//            this.birthday = -1;
+//        } else {
+//            this.birthday = customer.getBirthday().getTime();
+//
+//        }
         this.email = customer.getEmail();
     }
 
@@ -53,11 +50,11 @@ public class Profile {
         this.email = email;
     }
 
-    public long getBirthday() {
+    public String getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(long birthday) {
+    public void setBirthday(String birthday) {
         this.birthday = birthday;
     }
 
@@ -83,22 +80,6 @@ public class Profile {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getIdentityCard() {
-        return identityCard;
-    }
-
-    public void setIdentityCard(String identityCard) {
-        this.identityCard = identityCard;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getAvatarUrl() {

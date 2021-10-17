@@ -11,7 +11,7 @@ import java.util.Date;
 @Entity
 @Table(name = "customer")
 public class Customer {
-
+    public static final String FULLNAME = "fullName";
     @Id
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @GeneratedValue(generator = "uuid")
@@ -20,10 +20,8 @@ public class Customer {
     private String phone;
     private int gender;
     private String address;
-    private String identityCard;
-    private String description;
     private String avatarUrl;
-    private Date birthday;
+    private String birthday;
     private String email;
 
     @OneToOne(fetch = FetchType.EAGER)
@@ -31,49 +29,44 @@ public class Customer {
     private User user;
 
     public String getEmail() {
-        return email;
+        return user.getUsername();
     }
 
     public void update(ProfileBody body) {
         this.fullName = body.getFullName();
         this.phone = body.getPhone();
         this.address = body.getAddress();
-        this.identityCard = body.getIdentityCard();
         this.avatarUrl = body.getAvatarUrl();
         this.gender = body.getGender();
-        if (body.getBirthday() == -1) {
-            birthday = new Date();
-        } else {
-            birthday = new Date(body.getBirthday());
-        }
+        this.birthday = body.getBirthday();
         this.email = body.getEmail();
     }
 
     public Customer() {
     }
 
-    public Customer(FacebookLoginBody facebookLoginBody) {
-        setFullName(facebookLoginBody.getFullname());
-        if (facebookLoginBody.getBirthDay() != -1) {
-            setBirthday(new Date(facebookLoginBody.getBirthDay()));
-        } else {
-            setBirthday(new Date());
-        }
-        setEmail(facebookLoginBody.getEmail());
-        setAvatarUrl(facebookLoginBody.getAvatarUrl());
-        setEmail(facebookLoginBody.getEmail());
-        setGender(facebookLoginBody.getGender() == true ? 1 : 0);
-    }
+//    public Customer(FacebookLoginBody facebookLoginBody) {
+//        setFullName(facebookLoginBody.getFullname());
+//        if (facebookLoginBody.getBirthDay() != -1) {
+//            setBirthday(new Date(facebookLoginBody.getBirthDay()));
+//        } else {
+//            setBirthday(new Date());
+//        }
+//        setEmail(facebookLoginBody.getEmail());
+//        setAvatarUrl(facebookLoginBody.getAvatarUrl());
+//        setEmail(facebookLoginBody.getEmail());
+//        setGender(facebookLoginBody.getGender() ? 1 : 0);
+//    }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public Date getBirthday() {
+    public String getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(String birthday) {
         this.birthday = birthday;
     }
 
@@ -115,22 +108,6 @@ public class Customer {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getIdentityCard() {
-        return identityCard;
-    }
-
-    public void setIdentityCard(String identityCard) {
-        this.identityCard = identityCard;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getAvatarUrl() {
