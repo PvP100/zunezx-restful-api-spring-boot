@@ -12,8 +12,10 @@ public class OrderDetailView {
     private double price;
     private double total;
     private String size;
+    private String productUrl;
 
     public OrderDetailView(OrderDetail detail) {
+        this.productUrl = detail.getProduct().getAvatarUrl();
         this.id = detail.getId();
         this.orderId = detail.getOrder().getId();
         this.productId = detail.getProduct().getId();
@@ -21,6 +23,14 @@ public class OrderDetailView {
         this.price = detail.getPrice();
         this.total = (double) quantity * price;
         this.size = detail.getSize();
+    }
+
+    public String getProductUrl() {
+        return productUrl;
+    }
+
+    public void setProductUrl(String productUrl) {
+        this.productUrl = productUrl;
     }
 
     public String getId() {
