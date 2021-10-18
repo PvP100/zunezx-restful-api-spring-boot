@@ -7,17 +7,17 @@ public class ProductPreview {
     private String name;
     private double price;
     private String category;
-    private String productType;
     private String logoUrl;
     private String size;
     private int numberSave;
     private int quantity;
+    private int isSale;
+    private float salePercent;
 
     public ProductPreview() {
     }
 
     public ProductPreview(Product product) {
-        this.productType = product.getDescription();
         this.id = product.getId();
         this.name = product.getName();
         this.price = product.getPrice();
@@ -26,14 +26,24 @@ public class ProductPreview {
         this.category= product.getCategory().getTitle();
         this.size = product.getSize();
         this.quantity = product.getQuantity();
+        this.isSale = product.getIsSale();
+        this.salePercent = product.getSalePercent();
     }
 
-    public String getProductType() {
-        return productType;
+    public int getIsSale() {
+        return isSale;
     }
 
-    public void setProductType(String productType) {
-        this.productType = productType;
+    public void setIsSale(int isSale) {
+        this.isSale = isSale;
+    }
+
+    public float getSalePercent() {
+        return salePercent;
+    }
+
+    public void setSalePercent(float salePercent) {
+        this.salePercent = salePercent;
     }
 
     public int getQuantity() {
@@ -100,4 +110,3 @@ public class ProductPreview {
         this.numberSave = numberSave;
     }
 }
-

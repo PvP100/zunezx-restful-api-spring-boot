@@ -12,14 +12,12 @@ import net.codejava.store.customer.dao.CustomerRespository;
 import net.codejava.store.customer.dao.SaveClothesRepository;
 import net.codejava.store.customer.models.data.Customer;
 import net.codejava.store.product.dao.CategoryRepository;
+import net.codejava.store.product.dao.OrderRepository;
 import net.codejava.store.product.dao.ProductsRepository;
 import net.codejava.store.product.dao.RateClothesRepository;
 import net.codejava.store.product.models.body.ClothesBody;
 import net.codejava.store.product.models.data.*;
-import net.codejava.store.product.models.view.CategoryPreview;
-import net.codejava.store.product.models.view.ProductPreview;
-import net.codejava.store.product.models.view.ProductViewModel;
-import net.codejava.store.product.models.view.RateClothesViewModel;
+import net.codejava.store.product.models.view.*;
 import net.codejava.store.response_model.*;
 import net.codejava.store.utils.PageAndSortRequestBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +29,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/products")
@@ -51,6 +52,8 @@ public class ProductController {
     private CustomerRespository customerRespository;
     @Autowired
     private RateClothesRepository rateClothesRepository;
+    @Autowired
+    private OrderRepository orderRepository;
 
     //    @Value("${file.upload-dir}")
     String FILE_DIRECTORY = "D:\\AndroidProjects-4.2\\Zunezx\\API\\store\\ptit.store\\src\\main\\resources\\static\\uploadImages";
@@ -277,21 +280,54 @@ public class ProductController {
         return response;
     }
 
-//    @ApiOperation(value = "api search product", response = Iterable.class)
-//    @PostMapping("/countsubcate/")
-//    public Response countBySubCate(String des) {
-//        Response response;
-//        try {
-//            Long x = productsRepository.countByDescription(des);
-//            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-//            Page<ProductPreview> productPreviews = productsRepository.searchByName(pa)
-//            response = new OkResponse(x);
-//        } catch (Exception e){
-//            e.printStackTrace();
-//            response = new ServerErrorResponse();
-//        }
-//        return response;
-//    }
+    @ApiOperation(value = "api update sale", response = Iterable.class)
+    @PutMapping("/updatesale/{id}")
+    public Response updateSale(@PathVariable("id") String id,
+                               float salePercent) {
+        Response response;
+        try {
+            Product p = productsRepository.getOne(id);
+            p.setIsSale(1);
+            p.setSalePercent(salePercent);
+            productsRepository.save(p);
+            response = new OkResponse();
+        } catch (Exception e){
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
+    @ApiOperation(value = "api update sale", response = Iterable.class)
+    @PutMapping("/removesale/{id}")
+    public Response removeSale(@PathVariable("id") String id) {
+        Response response;
+        try {
+            Product p = productsRepository.getOne(id);
+            p.setIsSale(0);
+            p.setSalePercent(0);
+            productsRepository.save(p);
+            response = new OkResponse();
+        } catch (Exception e){
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
+    @ApiOperation(value = "api search product", response = Iterable.class)
+    @PostMapping("/countsubcate/")
+    public Response countBySubCate(String des) {
+        Response response;
+        try {
+            Long x = productsRepository.countByDescription(des);
+            response = new OkResponse(x);
+        } catch (Exception e){
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
 
     @ApiOperation(value = "api search product", response = Iterable.class)
     @GetMapping("/searchProduct/{productName}")
@@ -313,6 +349,34 @@ public class ProductController {
             Page<ProductPreview> clothesPreviews = productsRepository.searchByName(pageable, productName);
             response = new OkResponse(clothesPreviews);
         } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
+    @ApiOperation(value = "api Thống kê", response = Iterable.class)
+    @GetMapping("/statistic/")
+    public Response Statistic () {
+        Response response;
+        try {
+            List<Object[]> data = productsRepository.countBySubCate();
+            Map<String, BigDecimal> map = null;
+            if (data != null && !data.isEmpty()){
+                map = new HashMap<>();
+                for (Object[] object: data) {
+                    map.put((String) object[0], (BigDecimal) object[1]);
+                }
+            }
+
+            long totalProduct = productsRepository.count();
+            long totalOrder = orderRepository.count();
+            long orderChecked = orderRepository.countByIsCheck(1);
+            long orderUnchecked = orderRepository.countByIsCheck(0);
+            Double totalIncome = orderRepository.totalIncome();
+            ThongKeView view = new ThongKeView(totalProduct, totalIncome, totalOrder, orderChecked, orderUnchecked, map);
+            response = new OkResponse(view);
+        } catch (Exception e){
             e.printStackTrace();
             response = new ServerErrorResponse();
         }

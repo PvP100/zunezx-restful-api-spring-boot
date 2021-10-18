@@ -184,7 +184,7 @@ public class AuthController {
 
             User user = userRespository.findByUsername(u.getUsername());
             if (user != null) {
-                return new ResourceExistResponse("Tai khoan da ton tai!");
+                return new ResourceExistResponse("Tài khoản đã tồn tại!");
             } else {
                 user = new User();
                 user.setPassword(u.getPassword());
@@ -194,12 +194,12 @@ public class AuthController {
 
                 userRespository.save(user);
 
-                Customer customer = customerRegisterBody;
+                Customer customer = new Customer();
                 customer.setUser(user);
-//                customer.setFullName(customerRegisterBody.getFullName());
-//                customer.setAddress(customerRegisterBody.getAddress());
-//                customer.setPhone(customerRegisterBody.getPhone());
-//                customer.setEmail(customerRegisterBody.getEmail());
+                customer.setFullName(customerRegisterBody.getFullName());
+                customer.setAddress(customerRegisterBody.getAddress());
+                customer.setPhone(customerRegisterBody.getPhone());
+                customer.setEmail(customerRegisterBody.getEmail());
                 customerRespository.save(customer);
 
                 SendEmailUtils.sendEmailActiveAccount(u.getUsername());

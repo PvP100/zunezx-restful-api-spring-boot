@@ -1,12 +1,10 @@
 package net.codejava.store.product.models.data;
 
+import net.codejava.store.customer.models.data.Customer;
 import net.codejava.store.product.models.body.OrderBody;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -18,6 +16,10 @@ public class Order {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @GeneratedValue(generator = "uuid")
     private String id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name= "CustomerId")
+    private Customer customer;
 
     private String customerName;
     private String phone;
@@ -31,13 +33,20 @@ public class Order {
     }
 
     public void addOrder(OrderBody body){
-        this.customerName = body.getCustomerName();
-        this.phone = body.getPhone();
-        this.address = body.getAddress();
-        this.total = body.getTotal();
+        this.customerName = customer.getFullName();
+        this.phone = customer.getPhone();
+        this.address = customer.getAddress();
         this.createAt = new Date();
         this.updateAt = new Date();
         this.isCheck = 0;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public String getId() {

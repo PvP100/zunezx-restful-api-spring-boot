@@ -6,11 +6,21 @@ import java.util.Date;
 
 public class OrderPreview {
     private String id;
+    private int isCheck;
     private Date createAt;
 
     public OrderPreview(Order order) {
         this.id = order.getId();
         this.createAt = order.getCreateAt();
+        this.isCheck = order.getIsCheck();
+    }
+
+    public int getIsCheck() {
+        return isCheck;
+    }
+
+    public void setIsCheck(int isCheck) {
+        this.isCheck = isCheck;
     }
 
     public String getId() {

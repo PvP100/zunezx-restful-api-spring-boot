@@ -12,6 +12,11 @@ import net.codejava.store.admin.models.body.StoreBranchBody;
 import net.codejava.store.admin.models.view.StoreBranchViewModel;
 import net.codejava.store.auth.dao.UserRespository;
 import net.codejava.store.auth.models.User;
+import net.codejava.store.constants.Constant;
+import net.codejava.store.customer.dao.CustomerRespository;
+import net.codejava.store.customer.models.body.ProfileBody;
+import net.codejava.store.customer.models.data.Customer;
+import net.codejava.store.customer.models.view.CustomerView;
 import net.codejava.store.notification.FCMService;
 import net.codejava.store.product.dao.CategoryRepository;
 import net.codejava.store.product.dao.ProductsRepository;
@@ -29,6 +34,8 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +67,8 @@ public class AdminController {
     UserRespository userRespository;
     @Autowired
     ApplicationVersionRepository applicationVersionRepository;
+    @Autowired
+    CustomerRespository customerRespository;
 
     @GetMapping("/version")
     Response getVersionApp(){
@@ -73,6 +82,7 @@ public class AdminController {
         }
         return response;
     }
+
     @ApiOperation(value = "thêm một chi nhánh cho công ty", response = Iterable.class)
     @PostMapping("/store_branch")
     Response InsertBranch(@RequestBody StoreBranchBody storeBranchBody) {
@@ -87,6 +97,7 @@ public class AdminController {
         }
         return response;
     }
+
     @ApiOperation(value = "Lấy tất cả chi nhánh công ty", response = Iterable.class)
     @GetMapping("/store_branch")
     Response getAllBranch() {
@@ -128,81 +139,82 @@ public class AdminController {
     }
 
 
-//    @ApiOperation(value = "xuất thông tin sản phẩm quần áo", response = Iterable.class)
-//    @PutMapping("import/clothes")
-//    @Transactional(rollbackFor = Exception.class)
-//    Response importClothes() {
-//        Response response;
-//
-//        try {
-//            InputStream ExcelFileToRead = new FileInputStream("D:\\Downloads\\store\\ptit.store\\src\\main\\resources\\demo.xlsx");
-//            XSSFWorkbook wb = new XSSFWorkbook(ExcelFileToRead);
-//            XSSFSheet sheet = wb.getSheetAt(0);
-//            XSSFRow row;
-//            XSSFCell cell;
-//            List<Product> clothes = new ArrayList<>();
-//            Iterator rows = sheet.rowIterator();
-//
-//            rows.next();
-//            while (rows.hasNext()) {
-//                Product product1 = new Product();
-//                row = (XSSFRow) rows.next();
-//                Iterator cellIterator = row.cellIterator();
-//                cellIterator.next();
-//                while (cellIterator.hasNext()) {
-//                    cell = (XSSFCell) cellIterator.next();
-////                    System.out.println(cell.getColumnIndex());
-//                    switch (cell.getColumnIndex()) {
-//                        case 0: {
-//                            System.out.print("0");
-////                            clothes1.setPrice((int) getCellValue(cell));
-////                            System.out.println(getCellValue(cell).toString());
-//                            break;
-//                        }
-//                        case 1: {
-//                            System.out.print("1");
-//
-////                            clothes1.setDescription((String) getCellValue(cell));
-//                            break;
-//                        }
-//                        case 2: {
-//                            System.out.print("2");
-//
-//                            product1.setLogoUrl((String) getCellValue(cell));
-//                            break;
-//                        }
-//
-//                        case 3: {
-//                            System.out.print("3");
-//
-//                            product1.setName((String) getCellValue(cell));
-//                            break;
-//                        }
-//                        case 4: {
-//                            System.out.print("4");
-//
-//                            product1.setCategory(categoryRepository.findOne((String) getCellValue(cell)));
-//                            break;
-//                        }
-//                        case 5: {
-//                            System.out.println("5");
-//                            product1.setPrice((int)((double) getCellValue(cell)));
-//                            break;
-//                        }
-//                    }
-//                }
-//                product1.setCreatedDate(new Date());
-//                productsRepository.save(product1);
-//                clothes.add(product1);
-//            }
-//
-//            response = new OkResponse(clothes);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            response = new ServerErrorResponse();
-//        }
-//        return response;
-//    }
+
+    @ApiOperation(value = "xuất thông tin sản phẩm quần áo", response = Iterable.class)
+    @PutMapping("import/clothes")
+    @Transactional(rollbackFor = Exception.class)
+    Response importClothes() {
+        Response response;
+
+        try {
+            InputStream ExcelFileToRead = new FileInputStream("D:\\Downloads\\store\\ptit.store\\src\\main\\resources\\demo.xlsx");
+            XSSFWorkbook wb = new XSSFWorkbook(ExcelFileToRead);
+            XSSFSheet sheet = wb.getSheetAt(0);
+            XSSFRow row;
+            XSSFCell cell;
+            List<Product> clothes = new ArrayList<>();
+            Iterator rows = sheet.rowIterator();
+
+            rows.next();
+            while (rows.hasNext()) {
+                Product product1 = new Product();
+                row = (XSSFRow) rows.next();
+                Iterator cellIterator = row.cellIterator();
+                cellIterator.next();
+                while (cellIterator.hasNext()) {
+                    cell = (XSSFCell) cellIterator.next();
+//                    System.out.println(cell.getColumnIndex());
+                    switch (cell.getColumnIndex()) {
+                        case 0: {
+                            System.out.print("0");
+//                            clothes1.setPrice((int) getCellValue(cell));
+//                            System.out.println(getCellValue(cell).toString());
+                            break;
+                        }
+                        case 1: {
+                            System.out.print("1");
+
+//                            clothes1.setDescription((String) getCellValue(cell));
+                            break;
+                        }
+                        case 2: {
+                            System.out.print("2");
+
+                            product1.setAvatarUrl((String) getCellValue(cell));
+                            break;
+                        }
+
+                        case 3: {
+                            System.out.print("3");
+
+                            product1.setName((String) getCellValue(cell));
+                            break;
+                        }
+                        case 4: {
+                            System.out.print("4");
+
+                            product1.setCategory(categoryRepository.findOne((String) getCellValue(cell)));
+                            break;
+                        }
+                        case 5: {
+                            System.out.println("5");
+                            product1.setPrice((int)((double) getCellValue(cell)));
+                            break;
+                        }
+                    }
+                }
+                product1.setCreatedDate(new Date());
+                productsRepository.save(product1);
+                clothes.add(product1);
+            }
+
+            response = new OkResponse(clothes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
 
     private Object getCellValue(Cell cell) {
         switch (cell.getCellType()) {
@@ -256,6 +268,62 @@ public class AdminController {
             response = new ServerErrorResponse();
         }
 
+        return response;
+    }
+
+    //Api QLKH
+    @ApiOperation(value = "lấy danh sách khách hàng", response = Iterable.class)
+    @GetMapping("/listcustomer")
+    Response getListCustomer(
+            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
+            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Customer.FULLNAME)
+            @RequestParam(value = "sortBy", defaultValue = Customer.FULLNAME) String sortBy,
+            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
+            @RequestParam(value = "sortType", defaultValue = "desc") String sortType
+    ){
+        Response response;
+        try {
+            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+            Page<CustomerView> categoryView = customerRespository.getListCustomer(pageable);
+            response = new OkResponse(categoryView);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
+    @ApiOperation(value = "sửa thông tin khách hàng", response = Iterable.class)
+    @PutMapping("/updatecustomer/{customerID}")
+    Response updateCustomer(@PathVariable("customerID") String customerID,
+                            @RequestBody ProfileBody body){
+        Response response;
+        try {
+            Customer customer = customerRespository.getOne(customerID);
+            customer.update(body);
+            customerRespository.save(customer);
+            response = new OkResponse();
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
+    @ApiOperation(value = "xóa khách hàng như xóa số nyc :)", response = Iterable.class)
+    @PostMapping("/deletecustomer")
+    Response deleteCustomer(String ID){
+        Response response;
+        try {
+            customerRespository.delete(ID);
+            response = new OkResponse();
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
         return response;
     }
 

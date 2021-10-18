@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 
 public interface ProductsRepository extends JpaRepository<Product, String>{
     Product findById(String clothesID);
@@ -43,4 +45,8 @@ public interface ProductsRepository extends JpaRepository<Product, String>{
     Page<ProductPreview> searchByName(Pageable pageable,String name);
 
     long countByDescription(String description);
+
+    @Query(value = "select product.description, SUM(product.quantity) " +
+            " from product  GROUP BY product.description", nativeQuery = true)
+    List<Object[]> countBySubCate();
 }

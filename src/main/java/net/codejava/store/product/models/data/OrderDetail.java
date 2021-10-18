@@ -15,11 +15,14 @@ public class OrderDetail {
     @GeneratedValue(generator = "uuid")
     private String id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinColumn(name= "OrderId")
     private Order order;
 
-    private String productId;
+    @OneToOne(cascade = {CascadeType.ALL})
+    @JoinColumn(name= "ProductId")
+    private Product product;
+
     private int quantity;
     private double price;
     private double total;
@@ -29,11 +32,18 @@ public class OrderDetail {
     }
 
     public void addDetail(DetailBody body) {
-        this.productId = body.getProductId();
         this.quantity = body.getQuantity();
-        this.price = body.getPrice();
+        this.price = product.getPrice();
         this.total = (double) quantity * price;
         this.size = body.getSize();
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public String getId() {
@@ -50,14 +60,6 @@ public class OrderDetail {
 
     public void setOrder(Order order) {
         this.order = order;
-    }
-
-    public String getProductId() {
-        return productId;
-    }
-
-    public void setProductId(String productId) {
-        this.productId = productId;
     }
 
     public int getQuantity() {

@@ -6,7 +6,7 @@ import net.codejava.store.product.models.data.OrderDetail;
 public class OrderDetailView {
     private String id;
 
-    private Order order;
+    private String orderId;
     private String productId;
     private int quantity;
     private double price;
@@ -15,8 +15,8 @@ public class OrderDetailView {
 
     public OrderDetailView(OrderDetail detail) {
         this.id = detail.getId();
-        this.order = detail.getOrder();
-        this.productId = detail.getProductId();
+        this.orderId = detail.getOrder().getId();
+        this.productId = detail.getProduct().getId();
         this.quantity = detail.getQuantity();
         this.price = detail.getPrice();
         this.total = (double) quantity * price;
@@ -31,20 +31,20 @@ public class OrderDetailView {
         this.id = id;
     }
 
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
     public String getProductId() {
         return productId;
     }
 
     public void setProductId(String productId) {
         this.productId = productId;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 
     public int getQuantity() {
