@@ -12,8 +12,8 @@ import java.util.List;
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, String> {
 
     @Query("select new net.codejava.store.product.models.view.OrderDetailView(o) from OrderDetail o where o.order.id = ?1")
-    Page<OrderDetailView> getDetail(String id, Pageable pageable);
+    Page<OrderDetailView> getDetail(int id, Pageable pageable);
 
     @Query("select o.product.id, o.quantity from OrderDetail o where o.order.id = ?1")
-    List<Object[]> getCancelDetail(String id);
+    List<Object[]> getCancelDetail(int id);
 }

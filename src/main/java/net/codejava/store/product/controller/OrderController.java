@@ -112,7 +112,7 @@ public class OrderController {
 
     @GetMapping("/getdetail/{id}")
     @ApiOperation(value = "api chi tiết hóa đơn", response = Iterable.class)
-    public Response getOrderDetail(@PathVariable("id") String id,
+    public Response getOrderDetail(@PathVariable("id") int id,
            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
@@ -169,10 +169,10 @@ public class OrderController {
 
     @PutMapping("/cancelorder")
     @ApiOperation(value = "api hủy 1 hóa đơn", response = Iterable.class)
-    public Response cancelOrder(String id) {
+    public Response cancelOrder(int id) {
         Response response;
         try {
-            Order order = orderRepository.getOne(id);
+            Order order = orderRepository.getOne(String.valueOf(id));
             order.setIsCheck(-1);
             orderRepository.save(order);
 
