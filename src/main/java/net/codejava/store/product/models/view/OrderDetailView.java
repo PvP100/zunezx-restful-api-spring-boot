@@ -6,7 +6,7 @@ import net.codejava.store.product.models.data.OrderDetail;
 public class OrderDetailView {
     private String id;
 
-    private String orderId;
+    private int orderId;
     private String productId;
     private int quantity;
     private double price;
@@ -59,11 +59,11 @@ public class OrderDetailView {
         this.productId = productId;
     }
 
-    public String getOrderId() {
+    public int getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(String orderId) {
+    public void setOrderId(int orderId) {
         this.orderId = orderId;
     }
 
