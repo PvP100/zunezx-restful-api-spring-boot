@@ -13,8 +13,7 @@ public class Order {
     public static final String CREATE_AT = "createAt";
 
     @Id
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @GeneratedValue(generator = "uuid")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private String id;
 
     @ManyToOne(fetch = FetchType.EAGER)
