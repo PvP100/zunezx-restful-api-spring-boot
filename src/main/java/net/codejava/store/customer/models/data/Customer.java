@@ -29,7 +29,7 @@ public class Customer {
     private User user;
 
     public String getEmail() {
-        return user.getUsername();
+        return email;
     }
 
     public void update(ProfileBody body) {
@@ -44,19 +44,6 @@ public class Customer {
 
     public Customer() {
     }
-
-//    public Customer(FacebookLoginBody facebookLoginBody) {
-//        setFullName(facebookLoginBody.getFullname());
-//        if (facebookLoginBody.getBirthDay() != -1) {
-//            setBirthday(new Date(facebookLoginBody.getBirthDay()));
-//        } else {
-//            setBirthday(new Date());
-//        }
-//        setEmail(facebookLoginBody.getEmail());
-//        setAvatarUrl(facebookLoginBody.getAvatarUrl());
-//        setEmail(facebookLoginBody.getEmail());
-//        setGender(facebookLoginBody.getGender() ? 1 : 0);
-//    }
 
     public void setEmail(String email) {
         this.email = email;
