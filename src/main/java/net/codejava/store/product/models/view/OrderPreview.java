@@ -5,7 +5,7 @@ import net.codejava.store.product.models.data.Order;
 import java.util.Date;
 
 public class OrderPreview {
-    private String id;
+    private int id;
     private int isCheck;
     private Date createAt;
 
@@ -23,11 +23,11 @@ public class OrderPreview {
         this.isCheck = isCheck;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
