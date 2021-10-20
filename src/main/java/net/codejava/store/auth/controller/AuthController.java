@@ -196,6 +196,8 @@ public class AuthController {
 
                 Customer customer = new Customer();
                 customer.setUser(user);
+                customer.setBirthday(customerRegisterBody.getBirthday());
+                customer.setGender(customerRegisterBody.getGender());
                 customer.setFullName(customerRegisterBody.getFullName());
                 customer.setAddress(customerRegisterBody.getAddress());
                 customer.setPhone(customerRegisterBody.getPhone());
