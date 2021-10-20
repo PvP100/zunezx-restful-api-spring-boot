@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface OrderRepository extends JpaRepository<Order,String> {
+public interface OrderRepository extends JpaRepository<Order,Integer> {
     @Query("select new net.codejava.store.product.models.view.OrderPreview(o)" +
             " from Order o ")
     Page<OrderPreview> getAllOrderPreview(Pageable pageable);

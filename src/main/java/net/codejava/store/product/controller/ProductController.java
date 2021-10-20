@@ -178,7 +178,7 @@ public class ProductController {
 
     @ApiOperation(value = "api Thêm mới sản phẩm quần áo", response = Iterable.class)
     @RequestMapping(path = "/clothes/{id}", method = RequestMethod.POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public Response insertClothes(@PathVariable("id") String categoryID,
+    public Response insertClothes(@PathVariable("id") int categoryID,
                                   @RequestParam(value = "name",required = true) String name,
                                   @RequestParam(value = "description",required = true) String description,
                                   @RequestParam(value = "price",required = true) double price,

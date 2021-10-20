@@ -81,7 +81,7 @@ public class OrderController {
 
     @PostMapping("/delorder")
     @ApiOperation(value = "api xóa 1 hóa đơn", response = Iterable.class)
-    public Response deleteOrder(@RequestBody String id) {
+    public Response deleteOrder(@RequestBody int id) {
         Response response;
         try {
             orderRepository.delete(id);
@@ -96,7 +96,7 @@ public class OrderController {
 
     @PutMapping("/ordersuccess")
     @ApiOperation(value = "api sửa 1 hóa đơn", response = Iterable.class)
-    public Response updateOrder(String id) {
+    public Response updateOrder(int id) {
         Response response;
         try {
             Order order = orderRepository.getOne(id);
@@ -172,7 +172,7 @@ public class OrderController {
     public Response cancelOrder(int id) {
         Response response;
         try {
-            Order order = orderRepository.getOne(String.valueOf(id));
+            Order order = orderRepository.getOne(id);
             order.setIsCheck(-1);
             orderRepository.save(order);
 
@@ -196,7 +196,7 @@ public class OrderController {
 
     @GetMapping("/getorder/{id}")
     @ApiOperation(value = "api lấy thông tin 1 hóa đơn", response = Iterable.class)
-    public Response getOneOrder(@PathVariable("id") String id) {
+    public Response getOneOrder(@PathVariable("id") int id) {
         Response response;
         try {
             Order order = orderRepository.getOne(id);
