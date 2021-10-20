@@ -115,7 +115,7 @@ public class AdminController {
     }
 
     @PostMapping("clothes/{categoryID}")
-    Response insertClothes(@PathVariable("categoryID")String categoryID,
+    Response insertClothes(@PathVariable("categoryID")int categoryID,
                            @RequestBody ClothesBody clothesBody){
         Response response;
         try {
@@ -140,81 +140,81 @@ public class AdminController {
 
 
 
-    @ApiOperation(value = "xuất thông tin sản phẩm quần áo", response = Iterable.class)
-    @PutMapping("import/clothes")
-    @Transactional(rollbackFor = Exception.class)
-    Response importClothes() {
-        Response response;
-
-        try {
-            InputStream ExcelFileToRead = new FileInputStream("D:\\Downloads\\store\\ptit.store\\src\\main\\resources\\demo.xlsx");
-            XSSFWorkbook wb = new XSSFWorkbook(ExcelFileToRead);
-            XSSFSheet sheet = wb.getSheetAt(0);
-            XSSFRow row;
-            XSSFCell cell;
-            List<Product> clothes = new ArrayList<>();
-            Iterator rows = sheet.rowIterator();
-
-            rows.next();
-            while (rows.hasNext()) {
-                Product product1 = new Product();
-                row = (XSSFRow) rows.next();
-                Iterator cellIterator = row.cellIterator();
-                cellIterator.next();
-                while (cellIterator.hasNext()) {
-                    cell = (XSSFCell) cellIterator.next();
-//                    System.out.println(cell.getColumnIndex());
-                    switch (cell.getColumnIndex()) {
-                        case 0: {
-                            System.out.print("0");
-//                            clothes1.setPrice((int) getCellValue(cell));
-//                            System.out.println(getCellValue(cell).toString());
-                            break;
-                        }
-                        case 1: {
-                            System.out.print("1");
-
-//                            clothes1.setDescription((String) getCellValue(cell));
-                            break;
-                        }
-                        case 2: {
-                            System.out.print("2");
-
-                            product1.setAvatarUrl((String) getCellValue(cell));
-                            break;
-                        }
-
-                        case 3: {
-                            System.out.print("3");
-
-                            product1.setName((String) getCellValue(cell));
-                            break;
-                        }
-                        case 4: {
-                            System.out.print("4");
-
-                            product1.setCategory(categoryRepository.findOne((String) getCellValue(cell)));
-                            break;
-                        }
-                        case 5: {
-                            System.out.println("5");
-                            product1.setPrice((int)((double) getCellValue(cell)));
-                            break;
-                        }
-                    }
-                }
-                product1.setCreatedDate(new Date());
-                productsRepository.save(product1);
-                clothes.add(product1);
-            }
-
-            response = new OkResponse(clothes);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @ApiOperation(value = "xuất thông tin sản phẩm quần áo", response = Iterable.class)
+//    @PutMapping("import/clothes")
+//    @Transactional(rollbackFor = Exception.class)
+//    Response importClothes() {
+//        Response response;
+//
+//        try {
+//            InputStream ExcelFileToRead = new FileInputStream("D:\\Downloads\\store\\ptit.store\\src\\main\\resources\\demo.xlsx");
+//            XSSFWorkbook wb = new XSSFWorkbook(ExcelFileToRead);
+//            XSSFSheet sheet = wb.getSheetAt(0);
+//            XSSFRow row;
+//            XSSFCell cell;
+//            List<Product> clothes = new ArrayList<>();
+//            Iterator rows = sheet.rowIterator();
+//
+//            rows.next();
+//            while (rows.hasNext()) {
+//                Product product1 = new Product();
+//                row = (XSSFRow) rows.next();
+//                Iterator cellIterator = row.cellIterator();
+//                cellIterator.next();
+//                while (cellIterator.hasNext()) {
+//                    cell = (XSSFCell) cellIterator.next();
+////                    System.out.println(cell.getColumnIndex());
+//                    switch (cell.getColumnIndex()) {
+//                        case 0: {
+//                            System.out.print("0");
+////                            clothes1.setPrice((int) getCellValue(cell));
+////                            System.out.println(getCellValue(cell).toString());
+//                            break;
+//                        }
+//                        case 1: {
+//                            System.out.print("1");
+//
+////                            clothes1.setDescription((String) getCellValue(cell));
+//                            break;
+//                        }
+//                        case 2: {
+//                            System.out.print("2");
+//
+//                            product1.setAvatarUrl((String) getCellValue(cell));
+//                            break;
+//                        }
+//
+//                        case 3: {
+//                            System.out.print("3");
+//
+//                            product1.setName((String) getCellValue(cell));
+//                            break;
+//                        }
+//                        case 4: {
+//                            System.out.print("4");
+//
+//                            product1.setCategory(categoryRepository.findOne((Integer) getCellValue(cell)));
+//                            break;
+//                        }
+//                        case 5: {
+//                            System.out.println("5");
+//                            product1.setPrice((int)((double) getCellValue(cell)));
+//                            break;
+//                        }
+//                    }
+//                }
+//                product1.setCreatedDate(new Date());
+//                productsRepository.save(product1);
+//                clothes.add(product1);
+//            }
+//
+//            response = new OkResponse(clothes);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
     private Object getCellValue(Cell cell) {
         switch (cell.getCellType()) {
