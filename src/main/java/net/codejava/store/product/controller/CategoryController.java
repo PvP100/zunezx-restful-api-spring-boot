@@ -86,7 +86,7 @@ public class CategoryController {
 
     @PostMapping("/delcategory")
     @ApiOperation(value = "api xóa 1 danh mục sản phẩm", response = Iterable.class)
-    public Response deleteCategory( int id) {
+    public Response deleteCategory( String id) {
         Response response;
         try {
             categoryRepository.delete(id);
