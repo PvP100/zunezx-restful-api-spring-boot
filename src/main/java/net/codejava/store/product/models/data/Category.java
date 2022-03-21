@@ -17,6 +17,7 @@ public class Category {
     @GeneratedValue(generator = "uuid")
     private String id;
     private String title;
+    private String imgUrl;
 
     public String getId() {
         return id;
@@ -32,6 +33,14 @@ public class Category {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 }
 
