@@ -6,6 +6,7 @@ public class CategoryView {
     private String id;
     private String title;
     private int quantity;
+    private String imgUrl;
 
     public CategoryView() {
     }
@@ -14,6 +15,15 @@ public class CategoryView {
         this.id = category.getId();
         this.title = category.getTitle();
         this.quantity = 0;
+        this.imgUrl = category.getImgUrl();
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 
     public String getId() {
