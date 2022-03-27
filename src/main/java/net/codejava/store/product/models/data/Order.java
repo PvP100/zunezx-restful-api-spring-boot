@@ -27,8 +27,17 @@ public class Order {
     private Date updateAt;
     private double total;
     private int isCheck;
+    private int totalProduct;
 
     public Order() {
+    }
+
+    public int getTotalProduct() {
+        return totalProduct;
+    }
+
+    public void setTotalProduct(int totalProduct) {
+        this.totalProduct = totalProduct;
     }
 
     public void addOrder(OrderBody body){
@@ -38,6 +47,7 @@ public class Order {
         this.createAt = new Date();
         this.updateAt = new Date();
         this.isCheck = 0;
+        this.totalProduct = body.getDetails().size();
     }
 
     public Customer getCustomer() {

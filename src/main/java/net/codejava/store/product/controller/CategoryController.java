@@ -12,14 +12,13 @@ import net.codejava.store.product.dao.BannerRepository;
 import net.codejava.store.product.dao.CategoryRepository;
 import net.codejava.store.product.dao.ProductsRepository;
 import net.codejava.store.product.dao.RateClothesRepository;
+import net.codejava.store.product.models.body.CategoryBody;
 import net.codejava.store.product.models.body.UpdateCategoryBody;
 import net.codejava.store.product.models.data.Banner;
 import net.codejava.store.product.models.data.Category;
 import net.codejava.store.product.models.view.BannerView;
 import net.codejava.store.product.models.view.CategoryView;
-import net.codejava.store.response_model.OkResponse;
-import net.codejava.store.response_model.Response;
-import net.codejava.store.response_model.ServerErrorResponse;
+import net.codejava.store.response_model.*;
 import net.codejava.store.utils.PageAndSortRequestBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,6 +49,8 @@ public class CategoryController {
     @Autowired
     private RateClothesRepository rateClothesRepository;
 
+    String uniqueBannerUrl;
+
     /**********************Category********************/
     @ApiOperation(value = "Lấy toàn bộ danh mục", response = Iterable.class)
     @GetMapping("/categories")
@@ -78,12 +79,16 @@ public class CategoryController {
 
     @PostMapping("/addcategory")
     @ApiOperation(value = "api thêm 1 danh mục sản phẩm", response = Iterable.class)
-    public Response insertCategory(@RequestParam(value = "categoryAvatar") MultipartFile avatar,@RequestParam String title) {
+    public Response insertCategory(@RequestParam String title, @RequestParam String categoryType, @RequestParam(value = "categoryAvatar") MultipartFile avatar) {
         Response response;
         try {
+            if (!categoryRepository.checkCategoryType(categoryType).isEmpty()) {
+                return new CategoryResponse(ResponseConstant.ErrorMessage.CATEGORY_IS_EXISTS);
+            }
             Category category = new Category();
             String uniqueCategoryUrl = UUID.randomUUID().toString();
             category.setTitle(title);
+            category.setCategoryType(categoryType);
             String avatarUrl = ProductController.uploadFile("category/" + uniqueCategoryUrl, uniqueCategoryUrl + "_avatar.jpg",
                     avatar.getBytes(), "image/jpeg");
             category.setImgUrl(avatarUrl);
@@ -126,7 +131,7 @@ public class CategoryController {
     @PostMapping("/addBanner/")
     Response addBanner(@RequestParam(value = "bannerAvatar") MultipartFile avatar){
         try{
-            String uniqueBannerUrl = UUID.randomUUID().toString();
+            uniqueBannerUrl = UUID.randomUUID().toString();
             Banner banner = new Banner();
             String avatarUrl = ProductController.uploadFile("customers/" + uniqueBannerUrl, uniqueBannerUrl + "_avatar.jpg",
                     avatar.getBytes(), "image/jpeg");
@@ -137,6 +142,26 @@ public class CategoryController {
             return new ServerErrorResponse();
         }
         return new OkResponse();
+    }
+
+    @PutMapping("/updateBanner")
+    @ApiOperation(value = "api update Banner", response = Iterable.class)
+    public Response updateBanner(@RequestParam String id, @RequestParam(value = "bannerAvatar") MultipartFile avatar) {
+        Response response;
+        try {
+            Banner banner = bannerRepository.getOne(id);
+            uniqueBannerUrl = UUID.randomUUID().toString();
+            String avatarUrl = ProductController.uploadFile("customers/" + uniqueBannerUrl, uniqueBannerUrl + "_avatar.jpg",
+                    avatar.getBytes(), "image/jpeg");
+            banner.setImgUrl(avatarUrl);
+            bannerRepository.save(banner);
+            response = new OkResponse();
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+
+        return response;
     }
 
     @PostMapping("/delcategory")

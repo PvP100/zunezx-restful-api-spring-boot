@@ -17,7 +17,25 @@ public class Category {
     @GeneratedValue(generator = "uuid")
     private String id;
     private String title;
+    private String categoryType;
     private String imgUrl;
+    private int quantity;
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getCategoryType() {
+        return categoryType;
+    }
+
+    public void setCategoryType(String categoryType) {
+        this.categoryType = categoryType;
+    }
 
     public String getImgUrl() {
         return imgUrl;

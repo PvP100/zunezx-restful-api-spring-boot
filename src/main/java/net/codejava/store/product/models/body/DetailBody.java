@@ -4,7 +4,6 @@ public class DetailBody {
     private String productId;
     private int quantity;
     private double price;
-    private String size;
 
     public String getProductId() {
         return productId;
@@ -30,11 +29,4 @@ public class DetailBody {
         this.price = price;
     }
 
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
 }

@@ -182,28 +182,29 @@ public class ProductController {
                                   @RequestParam(value = "name",required = true) String name,
                                   @RequestParam(value = "description",required = true) String description,
                                   @RequestParam(value = "price",required = true) double price,
-                                  @RequestParam(value = "size",required = true) String size,
+                                  @RequestParam(value = "isSale",required = true) int isSale,
                                   @RequestParam(value = "quantity",required = true) int quantity,
                                   @RequestParam(value = "avatar",required = true) MultipartFile avatar,
-                                  @RequestParam(value = "cover",required = true) MultipartFile cover) {
+                                  @RequestParam(value = "warranty",required = true) String warranty) {
         Category category = categoryRepository.findOne(categoryID);
         if (category == null) {
             return new NotFoundResponse("Category not Exist");
         }
 
-        Product product = new Product(name, price, description, size, quantity);
+        Product product = new Product(name, price, description, quantity, isSale, warranty);
         product.setCategory(category);
+        category.setQuantity(product.getQuantity());
+        categoryRepository.save(category);
         productsRepository.save(product);
-        if(avatar != null && cover != null){
+        if(avatar != null){
             try {
                 String productID = productsRepository.getProductByName(name);
                 String avatarUrl = uploadFile("products/" + productID, productID + "_avatar.jpg",
                         avatar.getBytes(), "image/jpeg");
-                String coverUrl = uploadFile("products/" + productID, productID + "_cover.jpg",
-                        cover.getBytes(), "image/jpeg");
+//                String coverUrl = uploadFile("products/" + productID, productID + "_cover.jpg",
+//                        cover.getBytes(), "image/jpeg");
                 Product product1 = productsRepository.getOne(productID);
                 product1.setAvatarUrl(avatarUrl);
-                product1.setCoverUrl(coverUrl);
                 productsRepository.save(product1);
             }catch (IOException e) {
                 e.printStackTrace();
@@ -246,7 +247,6 @@ public class ProductController {
             if (description != null) product.setDescription(description);
             if (price != -1) product.setPrice(price);
             if (quantity != -1) product.setQuantity(quantity);
-            if (size != null) product.setSize(size);
             if (avatar != null){
                 String avatarUrl = uploadFile("products/" + productID, productID + "_avatar.jpg",
                         avatar.getBytes(), "image/jpeg");
@@ -255,7 +255,6 @@ public class ProductController {
             if (cover != null){
                 String coverUrl = uploadFile("products/" + productID, productID + "_cover.jpg",
                         cover.getBytes(), "image/jpeg");
-                product.setCoverUrl(coverUrl);
             }
             productsRepository.save(product);
         } catch (IOException e){

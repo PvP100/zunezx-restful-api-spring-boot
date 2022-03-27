@@ -21,12 +21,12 @@ public class Product {
     private String description;
     private Date createdDate;
     private String avatarUrl;
-    private String coverUrl;
-    private String size;
-    private int isSale;
+    private int isSale = 0;
+    private double salePrice = 0;
     private int quantity;
     private float salePercent;
     private int totalSave;
+    private String warranty;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name= "categoryID")
     private Category category;
@@ -34,8 +34,24 @@ public class Product {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<RateClothes> rateClothes;
 
+    public double getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(double salePrice) {
+        this.salePrice = salePrice;
+    }
+
     public Product() {
         this.createdDate = new Date();
+    }
+
+    public String getWarranty() {
+        return warranty;
+    }
+
+    public void setWarranty(String warranty) {
+        this.warranty = warranty;
     }
 
     public Product(ClothesBody body) {
@@ -47,16 +63,16 @@ public class Product {
         this.isSale = 0;
         this.quantity = 0;
         this.salePercent = 0;
-        this.size = body.getSize();
     }
 
-    public Product(String name, double price, String description, String size, int quantity) {
+    public Product(String name, double price, String description, int quantity, int isSale, String warranty) {
         this.name = name;
         this.price = price;
         this.description = description;
-        this.size = size;
         this.createdDate = new Date();
         this.quantity = quantity;
+        this.isSale = isSale;
+        this.warranty = warranty;
     }
 
     public void update(ClothesBody body){
@@ -71,22 +87,6 @@ public class Product {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public String getCoverUrl() {
-        return coverUrl;
-    }
-
-    public void setCoverUrl(String coverUrl) {
-        this.coverUrl = coverUrl;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
     }
 
     public String getId() {

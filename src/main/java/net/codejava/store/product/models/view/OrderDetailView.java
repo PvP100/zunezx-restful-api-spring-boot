@@ -11,7 +11,6 @@ public class OrderDetailView {
     private int quantity;
     private double price;
     private double total;
-    private String size;
     private String productUrl;
     private String productName;
 
@@ -24,7 +23,6 @@ public class OrderDetailView {
         this.quantity = detail.getQuantity();
         this.price = detail.getPrice();
         this.total = (double) quantity * price;
-        this.size = detail.getSize();
     }
 
     public String getProductName() {
@@ -89,13 +87,5 @@ public class OrderDetailView {
 
     public void setTotal(double total) {
         this.total = total;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
     }
 }

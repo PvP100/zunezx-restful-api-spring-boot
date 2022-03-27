@@ -13,6 +13,8 @@ public class ProductPreview {
     private int quantity;
     private int isSale;
     private float salePercent;
+    private double salePrice;
+    private String warranty;
 
     public ProductPreview() {
     }
@@ -24,10 +26,27 @@ public class ProductPreview {
         this.logoUrl = product.getAvatarUrl();
         this.numberSave = product.getTotalSave();
         this.category= product.getCategory().getTitle();
-        this.size = product.getSize();
         this.quantity = product.getQuantity();
         this.isSale = product.getIsSale();
         this.salePercent = product.getSalePercent();
+        this.warranty = product.getWarranty();
+        this.salePrice = product.getSalePrice();
+    }
+
+    public double getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(double salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    public String getWarranty() {
+        return warranty;
+    }
+
+    public void setWarranty(String warranty) {
+        this.warranty = warranty;
     }
 
     public int getIsSale() {

@@ -7,6 +7,7 @@ public class CategoryView {
     private String title;
     private int quantity;
     private String imgUrl;
+    private String categoryType;
 
     public CategoryView() {
     }
@@ -14,8 +15,9 @@ public class CategoryView {
     public CategoryView(Category category) {
         this.id = category.getId();
         this.title = category.getTitle();
-        this.quantity = 0;
+        this.quantity = category.getQuantity();
         this.imgUrl = category.getImgUrl();
+        this.categoryType = category.getCategoryType();
     }
 
     public String getImgUrl() {
@@ -48,5 +50,13 @@ public class CategoryView {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getCategoryType() {
+        return categoryType;
+    }
+
+    public void setCategoryType(String categoryType) {
+        this.categoryType = categoryType;
     }
 }

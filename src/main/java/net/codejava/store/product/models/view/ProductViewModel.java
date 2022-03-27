@@ -16,10 +16,8 @@ public class ProductViewModel {
     private String description;
     private Date createdDate;
     private String avatarUrl;
-    private String coverUrl;
     private String categoryTitle;
     private String categoryID;
-    private String size;
     private int quantity;
     private int numberSave;
     private boolean isSaved;
@@ -35,13 +33,11 @@ public class ProductViewModel {
         this.description = product.getDescription();
         this.createdDate = product.getCreatedDate();
         this.avatarUrl = product.getAvatarUrl();
-        this.coverUrl = product.getCoverUrl();
         this.categoryTitle = product.getCategory().getTitle();
         this.categoryID = product.getCategory().getId();
         this.quantity = product.getQuantity();
         this.isSaved = false;
         this.numberSave = product.getTotalSave();
-        this.size = product.getSize();
         setAvarageOfRate(getAvarageOfRate(product));
     }
 
@@ -67,22 +63,6 @@ public class ProductViewModel {
         }
 
         return (float) sum / product.getRateClothes().size();
-    }
-
-    public String getCoverUrl() {
-        return coverUrl;
-    }
-
-    public void setCoverUrl(String coverUrl) {
-        this.coverUrl = coverUrl;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
     }
 
     public void setAvarageOfRate(float avarageOfRate) {
