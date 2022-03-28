@@ -135,12 +135,21 @@ public class CategoryController {
             Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, null, null, 5);
             List<HomeCategoryView> homeCategoryViews = new ArrayList<>();
             List<CategoryView> categoryViews = categoryRepository.getCategoryCount();
-            for (int i = 0; i < categoryViews.size(); i++) {
-                categoryView = categoryViews.get(i);
-                homeCategoryViews.add(
-                        new HomeCategoryView(categoryView.getTitle(), productsRepository.getProductByCategory(pageable, categoryView.getId()).getContent())
-                );
-            }
+            homeCategoryViews.add(
+                    new HomeCategoryView("Huy nub", productsRepository.getProductByCategory(pageable, "012fd05f-f558-4fe2-aeb4-2430e4550ccf").getContent())
+            );
+            homeCategoryViews.add(
+                    new HomeCategoryView("Huy non", productsRepository.getProductByCategory(pageable, "012fd05f-f558-4fe2-aeb4-2430e4550ccf").getContent())
+            );
+            homeCategoryViews.add(
+                    new HomeCategoryView("Huy noob", productsRepository.getProductByCategory(pageable, "012fd05f-f558-4fe2-aeb4-2430e4550ccf").getContent())
+            );
+//            for (int i = 0; i < categoryViews.size(); i++) {
+//                categoryView = categoryViews.get(i);
+//                homeCategoryViews.add(
+//                        new HomeCategoryView(categoryView.getTitle(), productsRepository.getProductByCategory(pageable, categoryView.getId()).getContent())
+//                );
+//            }
             response = new OkResponse(homeCategoryViews);
         } catch (Exception e) {
             e.printStackTrace();
