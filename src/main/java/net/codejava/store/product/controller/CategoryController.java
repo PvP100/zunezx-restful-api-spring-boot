@@ -18,6 +18,7 @@ import net.codejava.store.product.models.data.Banner;
 import net.codejava.store.product.models.data.Category;
 import net.codejava.store.product.models.view.BannerView;
 import net.codejava.store.product.models.view.CategoryView;
+import net.codejava.store.product.models.view.HomeCategoryView;
 import net.codejava.store.response_model.*;
 import net.codejava.store.utils.PageAndSortRequestBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -120,12 +122,26 @@ public class CategoryController {
 
     @ApiOperation(value = "Lấy danh mục hiển thị màn Home", response = Iterable.class)
     @GetMapping("/getHomeCategory")
-    public Response getHomeCategory() {
+    public Response getHomeCategory(
+            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
+            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+            @RequestParam(value = "pageSize", required = false) Integer pageSize
+    ) {
         Response response;
 
         try {
-            List<BannerView> bannerViews = bannerRepository.getBanner();
-            response = new OkResponse(bannerViews);
+            CategoryView categoryView;
+            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, null, null, 5);
+            List<HomeCategoryView> homeCategoryViews = new ArrayList<>();
+            List<CategoryView> categoryViews = categoryRepository.getCategoryCount();
+            for (int i = 0; i < categoryViews.size(); i++) {
+                categoryView = categoryViews.get(i);
+                homeCategoryViews.add(
+                        new HomeCategoryView(categoryView.getTitle(), productsRepository.getProductByCategory(pageable, categoryView.getId()).getContent())
+                );
+            }
+            response = new OkResponse(homeCategoryViews);
         } catch (Exception e) {
             e.printStackTrace();
             response = new BannerErrorResponse(e.getLocalizedMessage());
