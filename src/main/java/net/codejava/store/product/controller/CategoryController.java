@@ -131,8 +131,7 @@ public class CategoryController {
             @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Product.CREATED_DATE)
             @RequestParam(value = "sortBy", defaultValue = Product.CREATED_DATE) String sortBy,
             @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
-            @RequestParam(value = "sortType", defaultValue = "desc") String sortType,
-            @PathVariable("id") String id
+            @RequestParam(value = "sortType", defaultValue = "desc") String sortType
     ) {
         Response response;
 
