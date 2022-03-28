@@ -122,7 +122,7 @@ public class CategoryController {
             response = new OkResponse(bannerViews);
         } catch (Exception e) {
             e.printStackTrace();
-            response = new ServerErrorResponse();
+            response = new BannerErrorResponse(e.getLocalizedMessage());
         }
         return response;
     }
