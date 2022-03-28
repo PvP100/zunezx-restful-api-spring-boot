@@ -105,6 +105,21 @@ public class CategoryController {
 
     @ApiOperation(value = "Lấy banner màn home", response = Iterable.class)
     @GetMapping("/getBanner")
+    public Response getHomeBanner() {
+        Response response;
+
+        try {
+            List<BannerView> bannerViews = bannerRepository.getBanner();
+            response = new OkResponse(bannerViews);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new BannerErrorResponse(e.getLocalizedMessage());
+        }
+        return response;
+    }
+
+    @ApiOperation(value = "Lấy danh mục hiển thị màn Home", response = Iterable.class)
+    @GetMapping("/getHomeCategory")
     public Response getHomeCategory() {
         Response response;
 
@@ -117,6 +132,7 @@ public class CategoryController {
         }
         return response;
     }
+
 
     @ApiOperation(value = "Api upload ảnh đại diện khách hàng.", response = Iterable.class)
     @PostMapping("/addBanner/")
