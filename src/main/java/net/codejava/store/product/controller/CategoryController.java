@@ -16,6 +16,7 @@ import net.codejava.store.product.models.body.CategoryBody;
 import net.codejava.store.product.models.body.UpdateCategoryBody;
 import net.codejava.store.product.models.data.Banner;
 import net.codejava.store.product.models.data.Category;
+import net.codejava.store.product.models.data.Product;
 import net.codejava.store.product.models.view.BannerView;
 import net.codejava.store.product.models.view.CategoryView;
 import net.codejava.store.product.models.view.HomeCategoryView;
@@ -126,30 +127,26 @@ public class CategoryController {
             @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
             @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
             @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
-            @RequestParam(value = "pageSize", required = false) Integer pageSize
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Product.CREATED_DATE)
+            @RequestParam(value = "sortBy", defaultValue = Product.CREATED_DATE) String sortBy,
+            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
+            @RequestParam(value = "sortType", defaultValue = "desc") String sortType,
+            @PathVariable("id") String id
     ) {
         Response response;
 
         try {
             CategoryView categoryView;
-            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, null, null, 5);
+            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, 5);
             List<HomeCategoryView> homeCategoryViews = new ArrayList<>();
             List<CategoryView> categoryViews = categoryRepository.getCategoryCount();
-            homeCategoryViews.add(
-                    new HomeCategoryView("Huy nub", productsRepository.getProductByCategory(pageable, "012fd05f-f558-4fe2-aeb4-2430e4550ccf").getContent())
-            );
-            homeCategoryViews.add(
-                    new HomeCategoryView("Huy non", productsRepository.getProductByCategory(pageable, "012fd05f-f558-4fe2-aeb4-2430e4550ccf").getContent())
-            );
-            homeCategoryViews.add(
-                    new HomeCategoryView("Huy noob", productsRepository.getProductByCategory(pageable, "012fd05f-f558-4fe2-aeb4-2430e4550ccf").getContent())
-            );
-//            for (int i = 0; i < categoryViews.size(); i++) {
-//                categoryView = categoryViews.get(i);
-//                homeCategoryViews.add(
-//                        new HomeCategoryView(categoryView.getTitle(), productsRepository.getProductByCategory(pageable, categoryView.getId()).getContent())
-//                );
-//            }
+            for (int i = 0; i < categoryViews.size(); i++) {
+                categoryView = categoryViews.get(i);
+                homeCategoryViews.add(
+                        new HomeCategoryView(categoryView.getTitle(), productsRepository.getProductByCategory(pageable, categoryView.getId()).getContent())
+                );
+            }
             response = new OkResponse(homeCategoryViews);
         } catch (Exception e) {
             e.printStackTrace();
