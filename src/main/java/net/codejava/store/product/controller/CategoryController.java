@@ -26,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -104,21 +105,11 @@ public class CategoryController {
 
     @ApiOperation(value = "Lấy banner màn home", response = Iterable.class)
     @GetMapping("/getBanner")
-    public Response getHomeCategory(
-            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
-            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
-            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
-            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Category.TITLE)
-            @RequestParam(value = "sortBy", defaultValue = Category.TITLE) String sortBy,
-            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
-            @RequestParam(value = "sortType", defaultValue = "desc") String sortType
-    ) {
+    public Response getHomeCategory() {
         Response response;
 
         try {
-            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-            Page<BannerView> bannerViews = bannerRepository.getBanner(pageable);
+            List<BannerView> bannerViews = bannerRepository.getBanner();
             response = new OkResponse(bannerViews);
         } catch (Exception e) {
             e.printStackTrace();

@@ -7,10 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface BannerRepository extends JpaRepository<Banner, String> {
 
     @Query("select new net.codejava.store.product.models.view.BannerView(b) " +
             " from Banner b ")
-    Page<BannerView> getBanner(Pageable pageable);
+    List<BannerView> getBanner();
 
 }
