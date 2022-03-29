@@ -203,6 +203,7 @@ public class OrderController {
             Customer c = customerRespository.getOne(order.getCustomer().getId());
             OrderView view = new OrderView();
             view.setId(order.getId());
+            view.setCreatedDate(order.getCreateAt());
             view.setTotal(order.getTotal());
             view.setCustomerName(c.getFullName());
             view.setPhone(c.getPhone());

@@ -1,11 +1,22 @@
 package net.codejava.store.product.models.view;
 
+import java.util.Date;
+
 public class OrderView {
     private int id;
     private String customerName;
     private String phone;
     private String address;
+    private Date createdDate;
     private double total;
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
 
     public int getId() {
         return id;
