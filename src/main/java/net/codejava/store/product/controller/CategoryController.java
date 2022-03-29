@@ -189,7 +189,7 @@ public class CategoryController {
     }
 
     @ApiOperation(value = "Api xóa thương hiệu", response = Iterable.class)
-    @PostMapping("/deleteBrand")
+    @DeleteMapping("/deleteBrand")
     public Response deleteBrand(@RequestParam("id") String id) {
         Response response;
         try {
@@ -203,7 +203,7 @@ public class CategoryController {
             response = new OkResponse();
         } catch (Exception e) {
             e.printStackTrace();
-            response = new ServerErrorResponse();
+            response = new CategoryResponse(e.getLocalizedMessage());
         }
         return response;
 
