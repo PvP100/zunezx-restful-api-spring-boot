@@ -8,7 +8,6 @@ public class ProductPreview {
     private double price;
     private String category;
     private String logoUrl;
-    private String size;
     private int numberSave;
     private int quantity;
     private int isSale;
@@ -71,14 +70,6 @@ public class ProductPreview {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
     }
 
     public String getId() {

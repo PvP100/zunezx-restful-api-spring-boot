@@ -41,8 +41,8 @@ public class SwaggerConfig {
         return new ApiInfoBuilder().title("Store service API")
                 .description("Store service API reference")
                 .termsOfServiceUrl("http://store-service.com")
-                .contact("anhthuy-mobile@gmail.com").license("Kidd License")
-                .licenseUrl("anhthuy-mobile@gmail.com").version("1.0")
+                .contact("phamvietphong3001@gmail.com").license("Phạm Việt Phong")
+                .licenseUrl("phamvietphong3001@gmail.com").version("1.0")
                 .build();
     }
 }

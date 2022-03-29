@@ -8,16 +8,15 @@ import net.codejava.store.constants.Constant;
 import net.codejava.store.customer.dao.CustomerRespository;
 import net.codejava.store.customer.dao.SaveClothesRepository;
 import net.codejava.store.customer.models.data.Customer;
-import net.codejava.store.product.dao.BannerRepository;
-import net.codejava.store.product.dao.CategoryRepository;
-import net.codejava.store.product.dao.ProductsRepository;
-import net.codejava.store.product.dao.RateClothesRepository;
+import net.codejava.store.product.dao.*;
 import net.codejava.store.product.models.body.CategoryBody;
 import net.codejava.store.product.models.body.UpdateCategoryBody;
 import net.codejava.store.product.models.data.Banner;
+import net.codejava.store.product.models.data.Brand;
 import net.codejava.store.product.models.data.Category;
 import net.codejava.store.product.models.data.Product;
 import net.codejava.store.product.models.view.BannerView;
+import net.codejava.store.product.models.view.BrandView;
 import net.codejava.store.product.models.view.CategoryView;
 import net.codejava.store.product.models.view.HomeCategoryView;
 import net.codejava.store.response_model.*;
@@ -40,6 +39,8 @@ public class CategoryController {
 
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private BrandRepository brandRepository;
     @Autowired
     private BannerRepository bannerRepository;
     @Autowired
@@ -121,6 +122,21 @@ public class CategoryController {
         return response;
     }
 
+    @ApiOperation(value = "Lấy brand", response = Iterable.class)
+    @GetMapping("/getBrand")
+    public Response getBrand() {
+        Response response;
+
+        try {
+            List<BrandView> bannerViews = brandRepository.getBrand();
+            response = new OkResponse(bannerViews);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new BannerErrorResponse(e.getLocalizedMessage());
+        }
+        return response;
+    }
+
     @ApiOperation(value = "Lấy danh mục hiển thị màn Home", response = Iterable.class)
     @GetMapping("/getHomeCategory")
     public Response getHomeCategory(
@@ -155,7 +171,7 @@ public class CategoryController {
     }
 
 
-    @ApiOperation(value = "Api upload ảnh đại diện khách hàng.", response = Iterable.class)
+    @ApiOperation(value = "Api thêm mới Banner.", response = Iterable.class)
     @PostMapping("/addBanner/")
     Response addBanner(@RequestParam(value = "bannerAvatar") MultipartFile avatar){
         try{
@@ -165,6 +181,44 @@ public class CategoryController {
                     avatar.getBytes(), "image/jpeg");
             banner.setImgUrl(avatarUrl);
             bannerRepository.save(banner);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return new ServerErrorResponse();
+        }
+        return new OkResponse();
+    }
+
+    @ApiOperation(value = "Api xóa thương hiệu", response = Iterable.class)
+    @DeleteMapping("/deleteBrand")
+    public Response deleteSaveClothes(@RequestParam("id") String id) {
+        Response response;
+        try {
+
+            Brand brand = brandRepository.findOne(id);
+            if (brand == null) {
+                return new NotFoundResponse("Thương hiệu không tồn tại");
+            }
+
+            saveClothesRepository.delete(id);
+            response = new OkResponse();
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+
+    }
+
+    @ApiOperation(value = "Api thêm mới thương hiệu.", response = Iterable.class)
+    @PostMapping("/addBrand/")
+    Response addBrand(@RequestParam(value = "brandAvatar") MultipartFile avatar){
+        try{
+            uniqueBannerUrl = UUID.randomUUID().toString();
+            Brand brand = new Brand();
+            String avatarUrl = ProductController.uploadFile("brands/" + uniqueBannerUrl, uniqueBannerUrl + "_avatar.jpg",
+                    avatar.getBytes(), "image/jpeg");
+            brand.setImgUrl(avatarUrl);
+            brandRepository.save(brand);
         }catch (Exception ex){
             ex.printStackTrace();
             return new ServerErrorResponse();
