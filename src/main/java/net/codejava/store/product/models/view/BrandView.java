@@ -3,20 +3,34 @@ package net.codejava.store.product.models.view;
 import net.codejava.store.product.models.data.Brand;
 
 public class BrandView {
-    private String id;
+    private int id;
     private String imgUrl;
+    private String brandType;
 
     public BrandView(Brand brand) {
-        this.id = "TH" + brand.getId();
+        this.id = brand.getId();
         this.imgUrl = brand.getImgUrl();
+        this.brandType = brand.getBrandType();
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setCategoryTitle(String id) {
+    public void setCategoryTitle(int id) {
         this.id = id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getBrandType() {
+        return brandType;
+    }
+
+    public void setBrandType(String brandType) {
+        this.brandType = brandType;
     }
 
     public String getImgUrl() {

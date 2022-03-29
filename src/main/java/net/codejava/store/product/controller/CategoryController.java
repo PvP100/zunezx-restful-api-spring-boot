@@ -203,7 +203,7 @@ public class CategoryController {
             response = new OkResponse();
         } catch (Exception e) {
             e.printStackTrace();
-            response = new CategoryResponse(e.getLocalizedMessage());
+            response = new ServerErrorResponse();
         }
         return response;
 
@@ -211,13 +211,14 @@ public class CategoryController {
 
     @ApiOperation(value = "Api thêm mới thương hiệu.", response = Iterable.class)
     @PostMapping("/addBrand/")
-    Response addBrand(@RequestParam(value = "brandAvatar") MultipartFile avatar){
+    Response addBrand(@RequestParam(value = "brandAvatar") MultipartFile avatar, @RequestParam(value = "brandType") String brandType){
         try{
             uniqueBannerUrl = UUID.randomUUID().toString();
             Brand brand = new Brand();
             String avatarUrl = ProductController.uploadFile("brands/" + uniqueBannerUrl, uniqueBannerUrl + "_avatar.jpg",
                     avatar.getBytes(), "image/jpeg");
             brand.setImgUrl(avatarUrl);
+            brand.setBrandType(brandType);
             brandRepository.save(brand);
         }catch (Exception ex){
             ex.printStackTrace();
