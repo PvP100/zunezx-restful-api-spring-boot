@@ -199,7 +199,7 @@ public class CategoryController {
                 return new NotFoundResponse("Thương hiệu không tồn tại");
             }
 
-            saveClothesRepository.delete(id);
+            brandRepository.delete(id);
             response = new OkResponse();
         } catch (Exception e) {
             e.printStackTrace();
