@@ -97,7 +97,7 @@ public class OrderController {
 
     @PostMapping("/getStaticCustomerOrder")
     @ApiOperation(value = "api thống kê hóa đơn khách hàng", response = Iterable.class)
-    public Response getStaticCustomerOrder(@RequestBody String customerId) {
+    public Response getStaticCustomerOrder(@RequestParam String customerId) {
         Response response;
         try {
             long orderChecked = orderRepository.getOrderCheckedByCustomerId(customerId).size();
