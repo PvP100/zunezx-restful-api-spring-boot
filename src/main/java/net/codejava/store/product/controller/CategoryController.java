@@ -189,15 +189,15 @@ public class CategoryController {
     }
 
     @ApiOperation(value = "Api xóa thương hiệu", response = Iterable.class)
-    @DeleteMapping("/deleteBrand")
+    @PostMapping("/deleteBrand")
     public Response deleteBrand(@RequestParam("id") String id) {
         Response response;
         try {
 
-//            Brand brand = brandRepository.findOne(id);
-//            if (brand == null) {
-//                return new NotFoundResponse("Thương hiệu không tồn tại");
-//            }
+            Brand brand = brandRepository.findOne(id);
+            if (brand == null) {
+                return new NotFoundResponse("Thương hiệu không tồn tại");
+            }
 
             brandRepository.delete(id);
             response = new OkResponse();
