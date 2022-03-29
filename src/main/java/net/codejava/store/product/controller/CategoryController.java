@@ -190,10 +190,10 @@ public class CategoryController {
 
     @ApiOperation(value = "Api xóa thương hiệu", response = Iterable.class)
     @DeleteMapping("/deleteBrand")
-    public Response deleteBrand(@RequestParam("id") String brandType) {
+    public Response deleteBrand(@RequestParam("id") int id) {
         Response response;
         try {
-            brandRepository.delete(brandType);
+            brandRepository.delete(id);
             response = new OkResponse();
         } catch (Exception e) {
             e.printStackTrace();

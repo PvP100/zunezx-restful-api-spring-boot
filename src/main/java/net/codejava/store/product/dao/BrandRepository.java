@@ -7,13 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface BrandRepository extends JpaRepository<Brand, String> {
+public interface BrandRepository extends JpaRepository<Brand, Integer> {
 
     @Query("select new net.codejava.store.product.models.view.BrandView(b) " +
             " from Brand b ")
     List<BrandView> getBrand();
-
-    @Query("delete from Brand b where b.brandType=:brandType")
-    Boolean deleteBrand(String brandType);
 
 }
