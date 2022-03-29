@@ -16,6 +16,7 @@ import net.codejava.store.product.models.data.OrderDetail;
 import net.codejava.store.product.models.data.Product;
 import net.codejava.store.product.models.view.OrderDetailView;
 import net.codejava.store.product.models.view.OrderPreview;
+import net.codejava.store.product.models.view.OrderStaticView;
 import net.codejava.store.product.models.view.OrderView;
 import net.codejava.store.response_model.OkResponse;
 import net.codejava.store.response_model.Response;
@@ -86,6 +87,23 @@ public class OrderController {
         try {
             orderRepository.delete(id);
             response = new OkResponse();
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+
+        return response;
+    }
+
+    @PostMapping("/getStaticCustomerOrder")
+    @ApiOperation(value = "api thống kê hóa đơn khách hàng", response = Iterable.class)
+    public Response getStaticCustomerOrder(@RequestBody String customerId) {
+        Response response;
+        try {
+            long orderChecked = orderRepository.getOrderCheckedByCustomerId(customerId).size();
+            long orderUnchecked = orderRepository.getOrderUncheckedByCustomerId(customerId).size();
+            long orderCanceled = orderRepository.getOrderCanceledByCustomerId(customerId).size();
+            response = new OkResponse(new OrderStaticView(orderUnchecked, orderCanceled,  orderChecked));
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();

@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface OrderRepository extends JpaRepository<Order,Integer> {
     @Query("select new net.codejava.store.product.models.view.OrderPreview(o)" +
             " from Order o ")
@@ -34,4 +36,16 @@ public interface OrderRepository extends JpaRepository<Order,Integer> {
     @Query("select new net.codejava.store.product.models.view.OrderPreview(o)" +
             " from Order o where o.isCheck = -1")
     Page<OrderPreview> getOrderCanceled(Pageable pageable);
+
+    @Query("select new net.codejava.store.product.models.view.OrderPreview(o)" +
+            " from Order o where o.customer.id = ?1 and o.isCheck = 1")
+    List<OrderPreview> getOrderCheckedByCustomerId(String id);
+
+    @Query("select new net.codejava.store.product.models.view.OrderPreview(o)" +
+            " from Order o where o.customer.id = ?1 and o.isCheck = 0")
+    List<OrderPreview> getOrderUncheckedByCustomerId(String id);
+
+    @Query("select new net.codejava.store.product.models.view.OrderPreview(o)" +
+            " from Order o where o.customer.id = ?1 and o.isCheck = -1")
+    List<OrderPreview> getOrderCanceledByCustomerId(String id);
 }
