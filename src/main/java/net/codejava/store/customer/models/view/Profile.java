@@ -2,6 +2,7 @@ package net.codejava.store.customer.models.view;
 
 
 import net.codejava.store.customer.models.data.Customer;
+import net.codejava.store.product.models.view.OrderStaticView;
 
 public class Profile {
     private String id;
@@ -12,6 +13,7 @@ public class Profile {
     private int gender;
     private String birthday;
     private String email;
+    private OrderStaticView orderStaticView;
 
     public Profile() {
     }
@@ -41,6 +43,13 @@ public class Profile {
         this.email = customer.getEmail();
     }
 
+    public OrderStaticView getOrderStaticView() {
+        return orderStaticView;
+    }
+
+    public void setOrderStaticView(OrderStaticView orderStaticView) {
+        this.orderStaticView = orderStaticView;
+    }
 
     public String getEmail() {
         return email;

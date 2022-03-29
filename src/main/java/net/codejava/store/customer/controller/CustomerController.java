@@ -27,6 +27,7 @@ import net.codejava.store.product.dao.ProductsRepository;
 import net.codejava.store.product.dao.OrderRepository;
 import net.codejava.store.product.models.data.Product;
 import net.codejava.store.product.models.data.SaveClothes;
+import net.codejava.store.product.models.view.OrderStaticView;
 import net.codejava.store.response_model.NotFoundResponse;
 import net.codejava.store.response_model.OkResponse;
 import net.codejava.store.response_model.Response;
@@ -53,6 +54,8 @@ public class CustomerController {
     @Autowired
     RateRepository rateRepository;
     @Autowired
+    OrderRepository orderRepo;
+    @Autowired
     private ProductsRepository productsRepository;
     @Autowired
     SaveClothesRepository saveClothesRepository;
@@ -78,6 +81,10 @@ public class CustomerController {
         Response response;
         try {
             Profile profile = customerRespository.getProfile(customerID);
+            long orderChecked = orderRepo.getOrderCheckedByCustomerId(customerID).size();
+            long orderUnchecked = orderRepo.getOrderUncheckedByCustomerId(customerID).size();
+            long orderCanceled = orderRepo.getOrderCanceledByCustomerId(customerID).size();
+            profile.setOrderStaticView(new OrderStaticView(orderUnchecked, orderCanceled,  orderChecked));
             response = new OkResponse(profile);
         } catch (Exception e) {
             e.printStackTrace();
