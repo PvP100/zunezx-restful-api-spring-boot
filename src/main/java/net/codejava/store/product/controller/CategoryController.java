@@ -193,7 +193,7 @@ public class CategoryController {
     public Response deleteBrand(@RequestParam("id") String brandType) {
         Response response;
         try {
-            brandRepository.deleteBrand(brandType);
+            brandRepository.delete(brandType);
             response = new OkResponse();
         } catch (Exception e) {
             e.printStackTrace();
