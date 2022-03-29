@@ -13,7 +13,7 @@ public interface BrandRepository extends JpaRepository<Brand, String> {
             " from Brand b ")
     List<BrandView> getBrand();
 
-    @Query("delete from Brand b where b.title=:title")
-    Boolean deleteBrand();
+    @Query("delete from Brand b where b.brandType=:brandType")
+    Boolean deleteBrand(String brandType);
 
 }
