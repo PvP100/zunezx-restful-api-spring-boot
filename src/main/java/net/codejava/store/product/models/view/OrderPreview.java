@@ -5,14 +5,16 @@ import net.codejava.store.product.models.data.Order;
 import java.util.Date;
 
 public class OrderPreview {
-    private String id;
+    private int id;
     private int isCheck;
-    private Date createAt;
+    private Date createdDate;
+    private Date updateDate;
     private int totalProduct;
 
     public OrderPreview(Order order) {
-        this.id = "HNC" + order.getId();
-        this.createAt = order.getCreateAt();
+        this.id = order.getId();
+        this.createdDate = order.getCreateAt();
+        this.updateDate = order.getUpdateAt();
         this.isCheck = order.getIsCheck();
         this.totalProduct = order.getTotalProduct();
     }
@@ -33,19 +35,27 @@ public class OrderPreview {
         this.isCheck = isCheck;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public Date getCreateAt() {
-        return createAt;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreateAt(Date createAt) {
-        this.createAt = createAt;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 }

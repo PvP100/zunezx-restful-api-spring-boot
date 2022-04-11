@@ -1,23 +1,15 @@
 package net.codejava.store.product.models.data;
 
-
-import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "Category")
 public class Category {
-    public static final String TITLE = "title";
+
     @Id
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @GeneratedValue(generator = "uuid")
-    private String id;
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private int id;
     private String title;
-    private String categoryType;
     private String imgUrl;
     private int quantity;
 
@@ -29,14 +21,6 @@ public class Category {
         this.quantity = quantity;
     }
 
-    public String getCategoryType() {
-        return categoryType;
-    }
-
-    public void setCategoryType(String categoryType) {
-        this.categoryType = categoryType;
-    }
-
     public String getImgUrl() {
         return imgUrl;
     }
@@ -45,11 +29,11 @@ public class Category {
         this.imgUrl = imgUrl;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

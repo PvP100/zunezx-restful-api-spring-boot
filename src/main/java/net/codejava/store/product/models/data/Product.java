@@ -18,6 +18,7 @@ public class Product {
     private String id;
     private String name;
     private double price;
+    @Column(columnDefinition = "TEXT")
     private String description;
     private Date createdDate;
     private String avatarUrl;

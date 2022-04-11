@@ -9,7 +9,7 @@ public class Brand {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
-    private String brandType;
+    private String brandName;
     private String imgUrl;
 
     public Brand() {
@@ -18,15 +18,15 @@ public class Brand {
     public Brand(int id, String imgUrl, String brandType) {
         this.id = id;
         this.imgUrl = imgUrl;
-        this.brandType = brandType;
+        this.brandName = brandType;
     }
 
-    public String getBrandType() {
-        return brandType;
+    public String getBrandName() {
+        return brandName;
     }
 
-    public void setBrandType(String brandType) {
-        this.brandType = brandType;
+    public void setBrandName(String brandType) {
+        this.brandName = brandType;
     }
 
     public int getId() {

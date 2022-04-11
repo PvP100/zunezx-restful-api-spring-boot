@@ -29,10 +29,10 @@ public interface ProductsRepository extends JpaRepository<Product, String>{
 
     @Query("select new net.codejava.store.product.models.view.ProductPreview(c) " +
             " from Product c where c.category.id = ?1")
-    Page<ProductPreview> getProductByCategory(Pageable pageable, String id);
+    Page<ProductPreview> getProductByCategory(Pageable pageable, int id);
 
     @Query("select new net.codejava.store.product.models.view.ProductPreview(c) from Product c where c.category.id = ?1")
-    Page<ProductPreview> getSimilarClothesPreviews(Pageable pageable, String categoryID);
+    Page<ProductPreview> getSimilarClothesPreviews(Pageable pageable, int categoryID);
 
     @Query("select new net.codejava.store.product.models.view.ProductViewModel(c) from Product c where c.id = ?1")
     ProductViewModel getClothesViewModel(String clothesID);

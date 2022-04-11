@@ -3,7 +3,7 @@ package net.codejava.store.product.models.view;
 import net.codejava.store.product.models.data.Banner;
 
 public class BannerView {
-    private String id;
+    private int id;
     private String imgUrl;
 
     public BannerView(Banner banner) {
@@ -11,11 +11,11 @@ public class BannerView {
         this.imgUrl = banner.getImgUrl();
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setCategoryTitle(String id) {
+    public void setCategoryTitle(int id) {
         this.id = id;
     }
 

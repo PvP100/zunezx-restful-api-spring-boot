@@ -5,12 +5,12 @@ import net.codejava.store.product.models.data.Brand;
 public class BrandView {
     private int id;
     private String imgUrl;
-    private String brandType;
+    private String brandName;
 
     public BrandView(Brand brand) {
         this.id = brand.getId();
         this.imgUrl = brand.getImgUrl();
-        this.brandType = brand.getBrandType();
+        this.brandName = brand.getBrandName();
     }
 
     public int getId() {
@@ -25,12 +25,12 @@ public class BrandView {
         this.id = id;
     }
 
-    public String getBrandType() {
-        return brandType;
+    public String getBrandName() {
+        return brandName;
     }
 
-    public void setBrandType(String brandType) {
-        this.brandType = brandType;
+    public void setBrandName(String brandType) {
+        this.brandName = brandType;
     }
 
     public String getImgUrl() {

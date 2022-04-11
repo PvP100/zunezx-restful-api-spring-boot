@@ -2,34 +2,30 @@ package net.codejava.store.product.models.data;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "Banner")
 public class Banner {
 
     @Id
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @GeneratedValue(generator = "uuid")
-    private String id;
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private int id;
     private String imgUrl;
 
     public Banner() {
     }
 
-    public Banner(String id, String imgUrl) {
+    public Banner(int id, String imgUrl) {
         this.id = id;
         this.imgUrl = imgUrl;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

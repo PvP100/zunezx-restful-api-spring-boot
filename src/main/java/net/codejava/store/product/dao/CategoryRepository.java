@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface CategoryRepository extends JpaRepository<Category, String> {
+public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     @Query("select new net.codejava.store.product.models.view.CategoryView(c) " +
             " from Category c ")
@@ -17,8 +17,8 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
             " from Category c ")
     List<CategoryView> getCategoryCount();
 
-    @Query("select new net.codejava.store.product.models.view.CategoryView(c) " +
-            " from Category c where c.categoryType = ?1")
-    List<CategoryView> checkCategoryType(String categoryType);
+//    @Query("select new net.codejava.store.product.models.view.CategoryView(c) " +
+//            " from Category c where c.categoryType = ?1")
+//    List<CategoryView> checkCategoryType(String categoryType);
 
 }

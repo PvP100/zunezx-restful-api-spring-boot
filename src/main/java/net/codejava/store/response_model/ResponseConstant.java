@@ -24,5 +24,7 @@ public class ResponseConstant {
         public static final String INTERNAL_SERVER_ERROR = "internal server error";
         public static final String PASSWORD_TOO_SHORT = "Password need to be at lease 6 character length";
         public static final String CATEGORY_IS_EXISTS = "Danh mục này đã tồn tại";
+        public static final String CUSTOMER_NOT_EXISTS = "Khách hàng không tồn tại";
+        public static final String PRODUCT_NOT_FOUND = "Không tìm thấy sản phẩm";
     }
 }

@@ -17,7 +17,7 @@ public class ProductViewModel {
     private Date createdDate;
     private String avatarUrl;
     private String categoryTitle;
-    private String categoryID;
+    private int categoryID;
     private int quantity;
     private int numberSave;
     private boolean isSaved;
@@ -141,11 +141,11 @@ public class ProductViewModel {
         this.categoryTitle = categoryTitle;
     }
 
-    public String getCategoryID() {
+    public int getCategoryID() {
         return categoryID;
     }
 
-    public void setCategoryID(String categoryID) {
+    public void setCategoryID(int categoryID) {
         this.categoryID = categoryID;
     }
 

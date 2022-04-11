@@ -14,19 +14,15 @@ import net.codejava.store.product.models.body.OrderBody;
 import net.codejava.store.product.models.data.Order;
 import net.codejava.store.product.models.data.OrderDetail;
 import net.codejava.store.product.models.data.Product;
-import net.codejava.store.product.models.view.OrderDetailView;
-import net.codejava.store.product.models.view.OrderPreview;
-import net.codejava.store.product.models.view.OrderStaticView;
-import net.codejava.store.product.models.view.OrderView;
-import net.codejava.store.response_model.OkResponse;
-import net.codejava.store.response_model.Response;
-import net.codejava.store.response_model.ServerErrorResponse;
+import net.codejava.store.product.models.view.*;
+import net.codejava.store.response_model.*;
 import net.codejava.store.utils.PageAndSortRequestBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -55,9 +51,10 @@ public class OrderController {
     private OrderDetailRepository orderDetailRepository;
 
     /**********************Order********************/
-    @ApiOperation(value = "Lấy toàn bộ hóa đơn", response = Iterable.class)
+    @ApiOperation(value = "Danh sách hóa đơn", response = Iterable.class)
     @GetMapping("/orders")
     public Response getAllOrders(
+            @RequestParam("type") int type,
             @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
             @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
             @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
@@ -71,7 +68,26 @@ public class OrderController {
 
         try {
             Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-            Page<OrderPreview> orderView = orderRepository.getAllOrderPreview(pageable);
+            Page<OrderPreview> orderView = null;
+            switch (type) {
+                case 0: {
+                    orderView = orderRepository.getAllOrderPreview(pageable);
+                    break;
+                }
+                case 1: {
+                    orderView = orderRepository.getOrderChecked(pageable);
+                    break;
+                }
+                case 2: {
+                    orderView = orderRepository.getOrderUnchecked(pageable);
+                    break;
+                }
+                case 3: {
+                    orderView = orderRepository.getOrderCanceled(pageable);
+                    break;
+                }
+            }
+
             response = new OkResponse(orderView);
         } catch (Exception e) {
             e.printStackTrace();
@@ -112,15 +128,16 @@ public class OrderController {
         return response;
     }
 
-    @PutMapping("/ordersuccess")
-    @ApiOperation(value = "api sửa 1 hóa đơn", response = Iterable.class)
+    @PostMapping("/ordersuccess")
+    @ApiOperation(value = "api xử lý đơn hàng", response = Iterable.class)
     public Response updateOrder(int id) {
         Response response;
         try {
             Order order = orderRepository.getOne(id);
             order.setIsCheck(1);
+            order.setUpdateAt(new Date());
             orderRepository.save(order);
-            response = new OkResponse();
+            response = new OkResponse(order.getUpdateAt());
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
@@ -130,20 +147,22 @@ public class OrderController {
 
     @GetMapping("/getdetail/{id}")
     @ApiOperation(value = "api chi tiết hóa đơn", response = Iterable.class)
-    public Response getOrderDetail(@PathVariable("id") int id,
-           @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
-           @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
-           @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
-           @RequestParam(value = "pageSize", required = false) Integer pageSize,
-           @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + OrderDetail.ID)
-           @RequestParam(value = "sortBy", defaultValue = OrderDetail.ID) String sortBy,
-           @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
-           @RequestParam(value = "sortType", defaultValue = "desc") String sortType) {
+    public Response getOrderDetail(@PathVariable("id") int id) {
         Response response;
         try {
-            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-            Page<OrderDetailView> details = orderDetailRepository.getDetail(id,pageable);
-            response = new OkResponse(details);
+            Order order = orderRepository.getOne(id);
+            List<OrderDetailView> details = orderDetailRepository.getDetail(id);
+            int totalPrice = orderDetailRepository.getTotalPrice(id);
+            OrderPreview orderPreview = new OrderPreview(order);
+            OrderDetailResultView orderDetailResultView = new OrderDetailResultView(
+                    order.getCustomerName(),
+                    order.getPhone(),
+                    order.getAddress(),
+                    orderPreview,
+                    details,
+                    totalPrice
+            );
+            response = new OkResponse(orderDetailResultView);
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
@@ -185,13 +204,14 @@ public class OrderController {
         return response;
     }
 
-    @PutMapping("/cancelorder")
+    @PostMapping("/cancelorder")
     @ApiOperation(value = "api hủy 1 hóa đơn", response = Iterable.class)
     public Response cancelOrder(int id) {
         Response response;
         try {
             Order order = orderRepository.getOne(id);
             order.setIsCheck(-1);
+            order.setUpdateAt(new Date());
             orderRepository.save(order);
 
             List<Object[]> data = orderDetailRepository.getCancelDetail(id);
@@ -204,7 +224,7 @@ public class OrderController {
                 }
             }
 
-            response = new OkResponse();
+            response = new OkResponse(order.getUpdateAt());
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
@@ -234,9 +254,36 @@ public class OrderController {
         return response;
     }
 
-    @ApiOperation(value = "Lấy toàn bộ hóa đơn đã check", response = Iterable.class)
-    @GetMapping("/orderschecked")
-    public Response getOrderChecked (
+//    @ApiOperation(value = "Lấy toàn bộ hóa đơn đã check", response = Iterable.class)
+//    @GetMapping("/orderschecked")
+//    public Response getOrderChecked (
+//            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
+//            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+//            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+//            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+//            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Order.CREATE_AT)
+//            @RequestParam(value = "sortBy", defaultValue = Order.CREATE_AT) String sortBy,
+//            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
+//            @RequestParam(value = "sortType", defaultValue = "desc") String sortType
+//    ) {
+//        Response response;
+//
+//        try {
+//            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+//            Page<OrderPreview> orderView = orderRepository.getOrderChecked(pageable);
+//            response = new OkResponse(orderView);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
+
+    @ApiOperation(value = "api search order", response = Iterable.class)
+    @GetMapping("/searchOrder")
+    public Response searchProduct(
+            @RequestParam("orderId") int id,
+            @RequestParam("type") int type,
             @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
             @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
             @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
@@ -250,62 +297,81 @@ public class OrderController {
 
         try {
             Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-            Page<OrderPreview> orderView = orderRepository.getOrderChecked(pageable);
-            response = new OkResponse(orderView);
+            Page<OrderPreview> orderPreviews = null;
+            switch (type) {
+                case 0: {
+                    orderPreviews = orderRepository.searchByOrderId(pageable, id);
+                    break;
+                }
+                case 1: {
+                    orderPreviews = orderRepository.searchByOrderIdAndStatus(pageable, id, 1);
+                    break;
+                }
+                case 2: {
+                    orderPreviews = orderRepository.searchByOrderIdAndStatus(pageable, id, 0);
+                    break;
+                }
+                case 3: {
+                    orderPreviews = orderRepository.searchByOrderIdAndStatus(pageable, id, -1);
+                    break;
+                }
+            }
+            response = new OkResponse(orderPreviews);
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
         }
         return response;
     }
-    @ApiOperation(value = "Lấy toàn bộ hóa đơn chưa check", response = Iterable.class)
-    @GetMapping("/ordersunchecked")
-    public Response getOrderUnchecked(
-            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
-            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
-            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
-            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Order.CREATE_AT)
-            @RequestParam(value = "sortBy", defaultValue = Order.CREATE_AT) String sortBy,
-            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
-            @RequestParam(value = "sortType", defaultValue = "desc") String sortType
-    ) {
-        Response response;
 
-        try {
-            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-            Page<OrderPreview> orderView = orderRepository.getOrderUnchecked(pageable);
-            response = new OkResponse(orderView);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
-    @ApiOperation(value = "Lấy toàn bộ hóa đơn đã hủy", response = Iterable.class)
-    @GetMapping("/orderscanceled")
-    public Response getOrderCanceled(
-            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
-            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
-            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
-            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Order.CREATE_AT)
-            @RequestParam(value = "sortBy", defaultValue = Order.CREATE_AT) String sortBy,
-            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
-            @RequestParam(value = "sortType", defaultValue = "desc") String sortType
-    ) {
-        Response response;
-
-        try {
-            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-            Page<OrderPreview> orderView = orderRepository.getOrderCanceled(pageable);
-            response = new OkResponse(orderView);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @ApiOperation(value = "Lấy toàn bộ hóa đơn chưa check", response = Iterable.class)
+//    @GetMapping("/ordersunchecked")
+//    public Response getOrderUnchecked(
+//            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
+//            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+//            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+//            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+//            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Order.CREATE_AT)
+//            @RequestParam(value = "sortBy", defaultValue = Order.CREATE_AT) String sortBy,
+//            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
+//            @RequestParam(value = "sortType", defaultValue = "desc") String sortType
+//    ) {
+//        Response response;
+//
+//        try {
+//            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+//            Page<OrderPreview> orderView = orderRepository.getOrderUnchecked(pageable);
+//            response = new OkResponse(orderView);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
+//    @ApiOperation(value = "Lấy toàn bộ hóa đơn đã hủy", response = Iterable.class)
+//    @GetMapping("/orderscanceled")
+//    public Response getOrderCanceled(
+//            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
+//            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+//            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+//            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+//            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Order.CREATE_AT)
+//            @RequestParam(value = "sortBy", defaultValue = Order.CREATE_AT) String sortBy,
+//            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
+//            @RequestParam(value = "sortType", defaultValue = "desc") String sortType
+//    ) {
+//        Response response;
+//
+//        try {
+//            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+//            Page<OrderPreview> orderView = orderRepository.getOrderCanceled(pageable);
+//            response = new OkResponse(orderView);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
     @ApiOperation(value = "Lấy toàn bộ hóa đơn của khách hàng", response = Iterable.class)
     @GetMapping("/customerorder/{customerid}")

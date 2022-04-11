@@ -3,11 +3,10 @@ package net.codejava.store.product.models.view;
 import net.codejava.store.product.models.data.Category;
 
 public class CategoryView {
-    private String id;
+    private int id;
     private String title;
     private int quantity;
     private String imgUrl;
-    private String categoryType;
 
     public CategoryView() {
     }
@@ -17,7 +16,6 @@ public class CategoryView {
         this.title = category.getTitle();
         this.quantity = category.getQuantity();
         this.imgUrl = category.getImgUrl();
-        this.categoryType = category.getCategoryType();
     }
 
     public String getImgUrl() {
@@ -28,11 +26,11 @@ public class CategoryView {
         this.imgUrl = imgUrl;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -52,11 +50,4 @@ public class CategoryView {
         this.quantity = quantity;
     }
 
-    public String getCategoryType() {
-        return categoryType;
-    }
-
-    public void setCategoryType(String categoryType) {
-        this.categoryType = categoryType;
-    }
 }

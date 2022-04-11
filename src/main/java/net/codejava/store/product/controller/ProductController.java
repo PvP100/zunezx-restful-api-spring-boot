@@ -117,7 +117,7 @@ public class ProductController {
             @RequestParam(value = "sortBy", defaultValue = Product.CREATED_DATE) String sortBy,
             @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
             @RequestParam(value = "sortType", defaultValue = "desc") String sortType,
-            @PathVariable("id") String id
+            @PathVariable("id") int id
     ) {
         Response response;
 
@@ -176,9 +176,9 @@ public class ProductController {
         return response;
     }
 
-    @ApiOperation(value = "api Thêm mới sản phẩm quần áo", response = Iterable.class)
-    @RequestMapping(path = "/clothes/{id}", method = RequestMethod.POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public Response insertClothes(@PathVariable("id") String categoryID,
+    @ApiOperation(value = "api Thêm mới sản phẩm", response = Iterable.class)
+    @RequestMapping(path = "/product", method = RequestMethod.POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public Response insertClothes(@RequestParam("id") int categoryID,
                                   @RequestParam(value = "name",required = true) String name,
                                   @RequestParam(value = "description",required = true) String description,
                                   @RequestParam(value = "price",required = true) double price,
@@ -314,7 +314,7 @@ public class ProductController {
         return response;
     }
 
-    @ApiOperation(value = "api search product", response = Iterable.class)
+    @ApiOperation(value = "api count product", response = Iterable.class)
     @PostMapping("/countsubcate/")
     public Response countBySubCate(String des) {
         Response response;

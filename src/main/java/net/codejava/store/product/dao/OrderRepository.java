@@ -4,10 +4,12 @@ import net.codejava.store.customer.models.data.CustomerOrder;
 import net.codejava.store.customer.models.view.CustomerOrderPreview;
 import net.codejava.store.product.models.data.Order;
 import net.codejava.store.product.models.view.OrderPreview;
+import net.codejava.store.product.models.view.ProductPreview;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -15,6 +17,14 @@ public interface OrderRepository extends JpaRepository<Order,Integer> {
     @Query("select new net.codejava.store.product.models.view.OrderPreview(o)" +
             " from Order o ")
     Page<OrderPreview> getAllOrderPreview(Pageable pageable);
+
+    @Query("select new net.codejava.store.product.models.view.OrderPreview(o) " +
+            "from Order o where o.id = :id")
+    Page<OrderPreview> searchByOrderId(Pageable pageable, @Param("id") int id);
+
+    @Query("select new net.codejava.store.product.models.view.OrderPreview(o) " +
+            "from Order o where o.id = :id and o.isCheck = :isCheck")
+    Page<OrderPreview> searchByOrderIdAndStatus(Pageable pageable, @Param("id") int id, @Param("isCheck") int isCheck);
 
     @Query("select new net.codejava.store.product.models.view.OrderPreview(o)" +
             " from Order o where o.customer.id = ?1")

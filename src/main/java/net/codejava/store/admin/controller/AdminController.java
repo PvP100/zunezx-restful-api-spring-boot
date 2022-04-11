@@ -115,7 +115,7 @@ public class AdminController {
     }
 
     @PostMapping("clothes/{categoryID}")
-    Response insertClothes(@PathVariable("categoryID")String categoryID,
+    Response insertClothes(@PathVariable("categoryID")int categoryID,
                            @RequestBody ClothesBody clothesBody){
         Response response;
         try {
