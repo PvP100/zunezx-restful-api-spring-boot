@@ -7,6 +7,7 @@ public class ProductPreview {
     private String name;
     private double price;
     private String category;
+    private String brand;
     private String logoUrl;
     private int numberSave;
     private int quantity;
@@ -18,6 +19,14 @@ public class ProductPreview {
     public ProductPreview() {
     }
 
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
     public ProductPreview(Product product) {
         this.id = product.getId();
         this.name = product.getName();
@@ -25,6 +34,7 @@ public class ProductPreview {
         this.logoUrl = product.getAvatarUrl();
         this.numberSave = product.getTotalSave();
         this.category= product.getCategory().getTitle();
+        this.brand= product.getBrand().getBrandName();
         this.quantity = product.getQuantity();
         this.isSale = product.getIsSale();
         this.salePercent = product.getSalePercent();
