@@ -11,10 +11,7 @@ import net.codejava.store.constants.Constant;
 import net.codejava.store.customer.dao.CustomerRespository;
 import net.codejava.store.customer.dao.SaveClothesRepository;
 import net.codejava.store.customer.models.data.Customer;
-import net.codejava.store.product.dao.CategoryRepository;
-import net.codejava.store.product.dao.OrderRepository;
-import net.codejava.store.product.dao.ProductsRepository;
-import net.codejava.store.product.dao.RateClothesRepository;
+import net.codejava.store.product.dao.*;
 import net.codejava.store.product.models.body.ClothesBody;
 import net.codejava.store.product.models.data.*;
 import net.codejava.store.product.models.view.*;
@@ -42,6 +39,8 @@ public class ProductController {
 
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private BrandRepository brandRepository;
     @Autowired
     private ProductsRepository productsRepository;
     @Autowired
@@ -178,7 +177,8 @@ public class ProductController {
 
     @ApiOperation(value = "api Thêm mới sản phẩm", response = Iterable.class)
     @RequestMapping(path = "/product", method = RequestMethod.POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public Response insertClothes(@RequestParam("id") int categoryID,
+    public Response insertClothes(@RequestParam("categoryId") int categoryID,
+                                  @RequestParam("brandId") int brandId,
                                   @RequestParam(value = "name",required = true) String name,
                                   @RequestParam(value = "description",required = true) String description,
                                   @RequestParam(value = "price",required = true) double price,
@@ -187,12 +187,17 @@ public class ProductController {
                                   @RequestParam(value = "avatar",required = true) MultipartFile avatar,
                                   @RequestParam(value = "warranty",required = true) String warranty) {
         Category category = categoryRepository.findOne(categoryID);
+        Brand brand = brandRepository.findOne(brandId);
         if (category == null) {
             return new NotFoundResponse("Category not Exist");
+        }
+        if (brand == null) {
+            return new NotFoundResponse("Thương hiệu không tồn tại");
         }
 
         Product product = new Product(name, price, description, quantity, isSale, warranty);
         product.setCategory(category);
+        product.setBrand(brand);
         category.setQuantity(product.getQuantity());
         categoryRepository.save(category);
         productsRepository.save(product);
