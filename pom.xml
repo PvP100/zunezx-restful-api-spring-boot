@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>HanoiComputerApiService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>springboot-backend</name>
@@ -104,6 +104,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>hnc-utt</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
