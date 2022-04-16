@@ -49,4 +49,5 @@ public interface ProductsRepository extends JpaRepository<Product, String>{
     @Query(value = "select product.description, SUM(product.quantity) " +
             " from product  GROUP BY product.description", nativeQuery = true)
     List<Object[]> countBySubCate();
+
 }

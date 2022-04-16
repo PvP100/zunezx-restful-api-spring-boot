@@ -1,5 +1,7 @@
 package net.codejava.store.response_model;
 
+import java.util.regex.Pattern;
+
 public class ResponseConstant {
     public static final String VI = "vi";
     public static final String EN = "en";
@@ -23,5 +25,8 @@ public class ResponseConstant {
         public static final String ACCOUNT_VERIFED = "account has been verified";
         public static final String INTERNAL_SERVER_ERROR = "internal server error";
         public static final String PASSWORD_TOO_SHORT = "Password need to be at lease 6 character length";
+        public static final String INVALID_CATEGORY_TITLE = "Category title must not contain special character";
+        public static final String SUBCATEGORY_IS_ALREADY_EXIST = "This subCategory is already exist";
+        public static final String CATEGORY_IS_ALREADY_EXIST = "This Category is already exist";
     }
 }
