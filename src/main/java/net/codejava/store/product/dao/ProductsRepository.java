@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -30,6 +31,14 @@ public interface ProductsRepository extends JpaRepository<Product, String>{
     @Query("select new net.codejava.store.product.models.view.ProductPreview(c) " +
             " from Product c where c.category.id = ?1")
     Page<ProductPreview> getProductByCategory(Pageable pageable, int id);
+
+    @Query("select new net.codejava.store.product.models.view.ProductPreview(c) " +
+            " from Product c where c.brand.id = ?1")
+    Page<ProductPreview> getProductByBrand(Pageable pageable, int id);
+
+    @Query("select new net.codejava.store.product.models.view.ProductPreview(c) " +
+            " from Product c where c.category.id = :categoryId and c.brand.id = :brandId")
+    Page<ProductPreview> getProductByCategoryAndBrand(Pageable pageable, @Param("categoryId") int categoryId, @Param("brandId") int brandId);
 
     @Query("select new net.codejava.store.product.models.view.ProductPreview(c) from Product c where c.category.id = ?1")
     Page<ProductPreview> getSimilarClothesPreviews(Pageable pageable, int categoryID);

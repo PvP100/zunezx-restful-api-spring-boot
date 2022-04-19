@@ -59,8 +59,10 @@ public class ProductController {
 
     /**********************Clothes********************/
     @ApiOperation(value = "Lấy toàn bộ sản phẩm quần áo", response = Iterable.class)
-    @GetMapping("/categorys/0")
+    @GetMapping("/getProduct")
     public Response getAllClothes(
+            @RequestParam(value = "categoryId", defaultValue = "0") int categoryId,
+            @RequestParam(value = "brandId", defaultValue = "0") int brandId,
             @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
             @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
             @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
@@ -74,8 +76,16 @@ public class ProductController {
 
         try {
             Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-            Page<ProductPreview> clothesPreviews = productsRepository.getAllClothesPreviews(pageable);
-            response = new OkResponse(clothesPreviews);
+            Page<ProductPreview> productPreviews = productsRepository.getAllClothesPreviews(pageable);
+            if (brandId != 0 && categoryId != 0) {
+                productPreviews = productsRepository.getProductByCategoryAndBrand(pageable, categoryId, brandId);
+            } else if (brandId != 0 && categoryId == 0) {
+                productPreviews = productsRepository.getProductByBrand(pageable, brandId);
+            } else if (brandId == 0 && categoryId != 0) {
+                productPreviews = productsRepository.getProductByCategory(pageable, categoryId);
+            }
+
+            response = new OkResponse(productPreviews);
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
