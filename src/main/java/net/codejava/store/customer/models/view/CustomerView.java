@@ -1,5 +1,6 @@
 package net.codejava.store.customer.models.view;
 
+import net.codejava.store.auth.models.User;
 import net.codejava.store.customer.models.data.Customer;
 
 public class CustomerView {
@@ -11,6 +12,7 @@ public class CustomerView {
     private String avatarUrl;
     private String birthday;
     private String email;
+    private User user;
 
     public CustomerView() {
     }
@@ -24,6 +26,15 @@ public class CustomerView {
         this.avatarUrl = customer.getAvatarUrl();
         this.birthday = customer.getBirthday();
         this.email = customer.getEmail();
+        this.user = customer.getUser();
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getId() {

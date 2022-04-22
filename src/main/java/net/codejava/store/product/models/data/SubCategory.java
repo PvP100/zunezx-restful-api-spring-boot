@@ -8,11 +8,11 @@ public class SubCategory {
 
     public static final String TITLE = "title";
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name= "categoryId")
+    @JoinColumn(name = "categoryId")
     private Category category;
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int subCategoryId;
     private String title;
 

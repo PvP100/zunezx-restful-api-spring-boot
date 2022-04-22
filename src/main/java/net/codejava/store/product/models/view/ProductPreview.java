@@ -1,18 +1,21 @@
 package net.codejava.store.product.models.view;
 
 import net.codejava.store.product.models.data.Product;
+import net.codejava.store.product.models.data.SizeProduct;
+
+import java.util.List;
 
 public class ProductPreview {
     private String id;
     private String name;
     private double price;
-    private String category;
+    private String subCategory;
     private String logoUrl;
-    private String size;
+    private List<SizeProduct> size;
     private int numberSave;
-    private int quantity;
     private int isSale;
     private float salePercent;
+    private List<String> listCover;
 
     public ProductPreview() {
     }
@@ -23,11 +26,19 @@ public class ProductPreview {
         this.price = product.getPrice();
         this.logoUrl = product.getAvatarUrl();
         this.numberSave = product.getTotalSave();
-        this.category= product.getCategory().getTitle();
+        this.subCategory= product.getSubCategory().getTitle();
         this.size = product.getSize();
-        this.quantity = product.getQuantity();
         this.isSale = product.getIsSale();
         this.salePercent = product.getSalePercent();
+        this.listCover = product.getCoverUrl();
+    }
+
+    public List<String> getListCover() {
+        return listCover;
+    }
+
+    public void setListCover(List<String> listCover) {
+        this.listCover = listCover;
     }
 
     public int getIsSale() {
@@ -46,19 +57,11 @@ public class ProductPreview {
         this.salePercent = salePercent;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public String getSize() {
+    public List<SizeProduct> getSize() {
         return size;
     }
 
-    public void setSize(String size) {
+    public void setSize(List<SizeProduct> size) {
         this.size = size;
     }
 
@@ -78,12 +81,12 @@ public class ProductPreview {
         this.name = name;
     }
 
-    public String getCategory() {
-        return category;
+    public String getSubCategory() {
+        return subCategory;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setSubCategory(String subCategory) {
+        this.subCategory = subCategory;
     }
 
     public double getPrice() {

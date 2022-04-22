@@ -1,5 +1,6 @@
 package net.codejava.store.auth.controller;
 
+import io.grpc.Server;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -9,22 +10,33 @@ import net.codejava.store.admin.models.Admin;
 import net.codejava.store.admin.models.body.AdminRegisterBody;
 import net.codejava.store.auth.dao.UserRespository;
 import net.codejava.store.auth.models.User;
-import net.codejava.store.auth.models.body.CustomerRegisterBody;
-import net.codejava.store.auth.models.body.FacebookLoginBody;
 import net.codejava.store.auth.models.body.NewPassword;
 import net.codejava.store.customer.dao.CustomerRespository;
 import net.codejava.store.customer.models.data.Customer;
 import net.codejava.store.customer.models.view.HeaderProfile;
+import net.codejava.store.email.EmailSenderService;
 import net.codejava.store.response_model.*;
 import net.codejava.store.utils.EmailValidate;
 import net.codejava.store.utils.PasswordValidate;
 import net.codejava.store.utils.SendEmailUtils;
 import net.codejava.store.utils.UserDecodeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Properties;
+import java.util.Random;
+
+import static net.codejava.store.utils.EmailValidate.VALID_EMAIL_ADDRESS_REGEX;
+import static net.codejava.store.utils.EmailValidate.validate;
 
 @RestController
 @RequestMapping("/api/auths")
@@ -38,6 +50,9 @@ public class AuthController {
     CustomerRespository customerRespository;
     @Autowired
     AdminRepository adminRepository;
+    @Autowired
+    EmailSenderService senderService;
+
     @ApiOperation(value = "api đăng nhập cho khách hàng", response = Iterable.class)
     @PostMapping("/customer/login")
     public Response CustomerLogin(@ApiParam(name = "Authorization", value = "username+\":\"+password, lấy kết quả encode theo Base64, sau đó thêm \"Basic \" + kết quả")
@@ -70,6 +85,7 @@ public class AuthController {
         }
         return response;
     }
+
     @ApiOperation(value = "Api đăng nhập cho admin", response = Iterable.class)
     @PostMapping("/admin/login")
     public Response AdminLogin(@ApiParam(name = "encodedString", value = "username+\":\"+password, lấy kết quả encode theo Base64, sau đó thêm \"Basic \" + kết quả")
@@ -205,6 +221,7 @@ public class AuthController {
                 customerRespository.save(customer);
 
                 SendEmailUtils.sendEmailActiveAccount(u.getUsername());
+
                 response = new OkResponse(u.getUsername());
             }
         } catch (Exception e) {
@@ -213,6 +230,11 @@ public class AuthController {
         }
         return response;
     }
+
+//    @EventListener(ApplicationReadyEvent.class)
+//    public void sendEmail(String toEmail, String subject, String body) {
+//        senderService.sendEmail(toEmail, subject, body);
+//    }
 
     @ApiOperation(value = "Đăng ký tài khoản admin", response = Iterable.class)
     @PostMapping("/admins/register")
@@ -253,6 +275,33 @@ public class AuthController {
         }
         return response;
     }
+
+    @ApiOperation(value = "Quên mật khẩu", response = Iterable.class)
+    @PostMapping("/reset_password/{customer_id}")
+    public Response resetPassword(@PathVariable("customer_id") String customerId) {
+        Response response;
+        try {
+            Customer customer = customerRespository.findOne(customerId);
+            if (customer == null) {
+                return new NotFoundResponse("Khách hàng không tồn tại");
+            }
+
+            if (!validate(customer.getEmail())) {
+                return new ForbiddenResponse("Email của khách hàng không hợp lệ. Hãy cập nhật lại email trong thông tin người dùng");
+            }
+            String newPassword = new RandomString().nextString();
+            customer.getUser().setPassword(newPassword);
+
+            senderService.sendEmail(customer.getEmail(), "Mật khẩu mới", "Mật khẩu mới của quý khách là: " + newPassword);
+            customerRespository.save(customer);
+            response = new OkResponse();
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
 
     @ApiOperation(value = "Xac nhan email", response = Iterable.class)
     @GetMapping("/registration/confirm/{username}")
@@ -312,27 +361,18 @@ public class AuthController {
         return response;
     }
 
-    @ApiOperation(value = "Quên mật khẩu (Gửi lại email reset mật khẩu)", response = Iterable.class)
-    @PostMapping("/customer/{id}/reset_password")
-    public Response sendEmailToRessetPassword(
-            @PathVariable("id") String customerID,
-            @Valid @RequestBody String email) {
+    @ApiOperation(value = "Khóa người dùng", response = Iterable.class)
+    @PostMapping("/customer/{customer_id}/lock_customer")
+    public Response lockCustomer(@PathVariable("customer_id") String customerID) {
         Response response;
         try {
             Customer customer = customerRespository.findOne(customerID);
             if (customer == null) {
                 return new NotFoundResponse("Customer not Exist");
             }
-            if (!EmailValidate.validate(email)) {
-                return new Response(HttpStatus.GONE, ResponseConstant.ErrorMessage.INVALID_EMAIL);
-            }
-
             User u = customer.getUser();
-            RandomString randomString = new RandomString();
-            String resetPassword = randomString.nextString();
-            u.setPassword(resetPassword);
+            u.setActived(false);
             userRespository.save(u);
-            SendEmailUtils.sendEmailResetPassword(email, resetPassword);
             response = new OkResponse();
         } catch (Exception e) {
             e.printStackTrace();
@@ -340,5 +380,52 @@ public class AuthController {
         }
         return response;
     }
+
+    @ApiOperation(value = "Mở khóa người dùng", response = Iterable.class)
+    @PostMapping("/customer/{customer_id}/unlock_customer")
+    public Response unlockCustomer(@PathVariable("customer_id") String customerId) {
+        Response response;
+        try {
+            Customer customer = customerRespository.findOne(customerId);
+            if (customer == null) return new NotFoundResponse("Customer not Exist");
+            User u = customer.getUser();
+            u.setActived(true);
+            userRespository.save(u);
+            response = new OkResponse();
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
+//    @ApiOperation(value = "Quên mật khẩu (Gửi lại email reset mật khẩu)", response = Iterable.class)
+//    @PostMapping("/customer/{id}/reset_password")
+//    public Response sendEmailToRessetPassword(
+//            @PathVariable("id") String customerID,
+//            @Valid @RequestBody String email) {
+//        Response response;
+//        try {
+//            Customer customer = customerRespository.findOne(customerID);
+//            if (customer == null) {
+//                return new NotFoundResponse("Customer not Exist");
+//            }
+//            if (!validate(email)) {
+//                return new Response(HttpStatus.GONE, ResponseConstant.ErrorMessage.INVALID_EMAIL);
+//            }
+//
+//            User u = customer.getUser();
+//            RandomString randomString = new RandomString();
+//            String resetPassword = randomString.nextString();
+//            u.setPassword(resetPassword);
+//            userRespository.save(u);
+//            SendEmailUtils.sendEmailResetPassword(email, resetPassword);
+//            response = new OkResponse();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
 }

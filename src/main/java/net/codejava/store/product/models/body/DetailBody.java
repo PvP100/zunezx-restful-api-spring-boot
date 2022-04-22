@@ -1,10 +1,13 @@
 package net.codejava.store.product.models.body;
 
+import net.codejava.store.product.models.data.SizeProduct;
+
+import java.util.List;
+
 public class DetailBody {
     private String productId;
-    private int quantity;
     private double price;
-    private String size;
+    private List<SizeProduct> size;
 
     public String getProductId() {
         return productId;
@@ -12,14 +15,6 @@ public class DetailBody {
 
     public void setProductId(String productId) {
         this.productId = productId;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 
     public double getPrice() {
@@ -30,11 +25,11 @@ public class DetailBody {
         this.price = price;
     }
 
-    public String getSize() {
+    public List<SizeProduct> getSize() {
         return size;
     }
 
-    public void setSize(String size) {
+    public void setSize(List<SizeProduct> size) {
         this.size = size;
     }
 }

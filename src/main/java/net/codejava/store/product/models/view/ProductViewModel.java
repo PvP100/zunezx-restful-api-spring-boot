@@ -3,10 +3,12 @@ package net.codejava.store.product.models.view;
 
 import net.codejava.store.product.models.data.Category;
 import net.codejava.store.product.models.data.Product;
+import net.codejava.store.product.models.data.ProductCover;
 import net.codejava.store.product.models.data.RateClothes;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class ProductViewModel {
@@ -16,8 +18,11 @@ public class ProductViewModel {
     private String description;
     private Date createdDate;
     private String avatarUrl;
-    private String coverUrl;
-    private String categoryTitle;
+    private List<String> coverList;
+//    private String cover1Url;
+//    private String cover2Url;
+//    private String cover3Url;
+    private String subCategoryTitle;
     private String categoryID;
     private String size;
     private int quantity;
@@ -35,13 +40,13 @@ public class ProductViewModel {
         this.description = product.getDescription();
         this.createdDate = product.getCreatedDate();
         this.avatarUrl = product.getAvatarUrl();
-        this.coverUrl = product.getCoverUrl();
-        this.categoryTitle = product.getCategory().getTitle();
-        this.categoryID = product.getCategory().getId();
-        this.quantity = product.getQuantity();
+        this.coverList = product.getCoverUrl();
+        this.subCategoryTitle = product.getSubCategory().getTitle();
+        this.categoryID = product.getSubCategory().getCategory().getId();
+//        this.quantity = product.getQuantity();
         this.isSaved = false;
         this.numberSave = product.getTotalSave();
-        this.size = product.getSize();
+//        this.size = product.getSize();
         setAvarageOfRate(getAvarageOfRate(product));
     }
 
@@ -69,13 +74,37 @@ public class ProductViewModel {
         return (float) sum / product.getRateClothes().size();
     }
 
-    public String getCoverUrl() {
-        return coverUrl;
+    public List<String> getCoverList() {
+        return coverList;
     }
 
-    public void setCoverUrl(String coverUrl) {
-        this.coverUrl = coverUrl;
+    public void setCoverList(List<String> coverList) {
+        this.coverList = coverList;
     }
+
+    //    public String getCover1Url() {
+//        return cover1Url;
+//    }
+//
+//    public void setCover1Url(String cover1Url) {
+//        this.cover1Url = cover1Url;
+//    }
+//
+//    public String getCover2Url() {
+//        return cover2Url;
+//    }
+//
+//    public void setCover2Url(String cover2Url) {
+//        this.cover2Url = cover2Url;
+//    }
+//
+//    public String getCover3Url() {
+//        return cover3Url;
+//    }
+//
+//    public void setCover3Url(String cover3Url) {
+//        this.cover3Url = cover3Url;
+//    }
 
     public String getSize() {
         return size;
@@ -153,12 +182,12 @@ public class ProductViewModel {
         this.avatarUrl = avatarUrl;
     }
 
-    public String getCategoryTitle() {
-        return categoryTitle;
+    public String getSubCategoryTitle() {
+        return subCategoryTitle;
     }
 
-    public void setCategoryTitle(String categoryTitle) {
-        this.categoryTitle = categoryTitle;
+    public void setSubCategoryTitle(String subCategoryTitle) {
+        this.subCategoryTitle = subCategoryTitle;
     }
 
     public String getCategoryID() {

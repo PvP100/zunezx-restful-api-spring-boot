@@ -1,17 +1,21 @@
 package net.codejava.store.product.models.body;
 
+import net.codejava.store.product.models.data.SizeProduct;
+
+import java.util.List;
+
 public class ClothesBody {
 
     private String name;
     private double price;
     private String description;
-    private String size;
+    private List<SizeProduct> size;
 
-    public String getSize() {
+    public List<SizeProduct> getSize() {
         return size;
     }
 
-    public void setSize(String size) {
+    public void setSize(List<SizeProduct> size) {
         this.size = size;
     }
 

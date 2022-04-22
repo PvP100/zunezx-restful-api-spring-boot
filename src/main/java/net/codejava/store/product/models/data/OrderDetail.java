@@ -4,6 +4,7 @@ import net.codejava.store.product.models.body.DetailBody;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "OrderDetail")
@@ -16,34 +17,35 @@ public class OrderDetail {
     private String id;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
-    @JoinColumn(name= "OrderId")
+    @JoinColumn(name= "orderId")
     private Order order;
 
-    @OneToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name= "ProductId")
-    private Product product;
-
-    private int quantity;
-    private double price;
+    @ElementCollection
+    private List<Product> productList;
     private double total;
-    private String size;
+    private int quantityS;
+    private int quantityM;
+    private int quantityL;
+    private int quantityXL;
 
     public OrderDetail() {
     }
 
-    public void addDetail(DetailBody body) {
-        this.quantity = body.getQuantity();
-        this.price = product.getPrice();
-        this.total = (double) quantity * price;
-        this.size = body.getSize();
+    public OrderDetail(List<Product> productList, double total, int quantityS, int quantityM, int quantityL, int quantityXL) {
+        this.productList = productList;
+        this.total = total;
+        this.quantityS = quantityS;
+        this.quantityM = quantityM;
+        this.quantityL = quantityL;
+        this.quantityXL = quantityXL;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
+    public double calculateTotal() {
+        double totalCount = 0;
+        for (int i = 0; i < productList.size(); i++) {
+            totalCount += (quantityS + quantityM + quantityL + quantityXL) * productList.get(i).getPrice();
+        }
+        return totalCount;
     }
 
     public String getId() {
@@ -62,20 +64,12 @@ public class OrderDetail {
         this.order = order;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public List<Product> getProductList() {
+        return productList;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
+    public void setProductList(List<Product> productList) {
+        this.productList = productList;
     }
 
     public double getTotal() {
@@ -86,11 +80,35 @@ public class OrderDetail {
         this.total = total;
     }
 
-    public String getSize() {
-        return size;
+    public int getQuantityS() {
+        return quantityS;
     }
 
-    public void setSize(String size) {
-        this.size = size;
+    public void setQuantityS(int quantityS) {
+        this.quantityS = quantityS;
+    }
+
+    public int getQuantityM() {
+        return quantityM;
+    }
+
+    public void setQuantityM(int quantityM) {
+        this.quantityM = quantityM;
+    }
+
+    public int getQuantityL() {
+        return quantityL;
+    }
+
+    public void setQuantityL(int quantityL) {
+        this.quantityL = quantityL;
+    }
+
+    public int getQuantityXL() {
+        return quantityXL;
+    }
+
+    public void setQuantityXL(int quantityXL) {
+        this.quantityXL = quantityXL;
     }
 }

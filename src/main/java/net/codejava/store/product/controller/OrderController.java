@@ -17,6 +17,7 @@ import net.codejava.store.product.models.data.Product;
 import net.codejava.store.product.models.view.OrderDetailView;
 import net.codejava.store.product.models.view.OrderPreview;
 import net.codejava.store.product.models.view.OrderView;
+import net.codejava.store.response_model.ForbiddenResponse;
 import net.codejava.store.response_model.OkResponse;
 import net.codejava.store.response_model.Response;
 import net.codejava.store.response_model.ServerErrorResponse;
@@ -27,6 +28,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static net.codejava.store.response_model.ResponseConstant.ErrorMessage.*;
 
 @RestController
 @RequestMapping("/api/order")
@@ -139,13 +142,16 @@ public class OrderController {
         Response response;
         try {
             Customer c = customerRespository.getOne(body.getCustomerID());
+            if (!c.getUser().getActived()){
+                return new ForbiddenResponse(YOUR_ACCOUNT_IS_LOCKED_BY_ADMIN);
+            }
             Order order = new Order();
             order.setCustomer(c);
             order.addOrder(body);
             double total = 0;
             for (DetailBody d : body.getDetails()) {
                 Product p = productsRepository.getOne(d.getProductId());
-                if (p.getQuantity() < d.getQuantity()){
+                if (p.getSize() < d.getQuantity()){
                     return new ServerErrorResponse();
                 }
                 OrderDetail detail = new OrderDetail();

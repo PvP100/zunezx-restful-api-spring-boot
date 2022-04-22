@@ -28,5 +28,6 @@ public class ResponseConstant {
         public static final String INVALID_CATEGORY_TITLE = "Category title must not contain special character";
         public static final String SUBCATEGORY_IS_ALREADY_EXIST = "This subCategory is already exist";
         public static final String CATEGORY_IS_ALREADY_EXIST = "This Category is already exist";
+        public static final String YOUR_ACCOUNT_IS_LOCKED_BY_ADMIN = "YOUR_ACCOUNT_IS_LOCKED_BY_ADMIN";
     }
 }

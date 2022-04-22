@@ -20,9 +20,11 @@ import net.codejava.store.customer.models.view.CustomerView;
 import net.codejava.store.notification.FCMService;
 import net.codejava.store.product.dao.CategoryRepository;
 import net.codejava.store.product.dao.ProductsRepository;
+import net.codejava.store.product.dao.SubCategoryRepository;
 import net.codejava.store.product.models.body.ClothesBody;
 import net.codejava.store.product.models.data.Category;
 import net.codejava.store.product.models.data.Product;
+import net.codejava.store.product.models.data.SubCategory;
 import net.codejava.store.response_model.NotFoundResponse;
 import net.codejava.store.response_model.OkResponse;
 import net.codejava.store.response_model.Response;
@@ -59,6 +61,8 @@ public class AdminController {
     EntityManager entityManager;
     @Autowired
     CategoryRepository categoryRepository;
+    @Autowired
+    SubCategoryRepository subCategoryRepository;
     @Autowired
     ProductsRepository productsRepository;
     @Autowired
@@ -115,16 +119,16 @@ public class AdminController {
     }
 
     @PostMapping("clothes/{categoryID}")
-    Response insertClothes(@PathVariable("categoryID")String categoryID,
+    Response insertClothes(@PathVariable("categoryID")Integer subCategoryID,
                            @RequestBody ClothesBody clothesBody){
         Response response;
         try {
-            Category category = categoryRepository.findOne(categoryID);
-            if(category == null){
+            SubCategory subCategory = subCategoryRepository.findOne(subCategoryID);
+            if(subCategory == null){
                 return new NotFoundResponse("Category not exist!");
             }
             Product product = new Product(clothesBody);
-            product.setCategory(category);
+            product.setSubCategory(subCategory);
             productsRepository.save(product);
             List<User> users = userRespository.findAll();
             for (User u:users){

@@ -19,20 +19,20 @@ public interface ProductsRepository extends JpaRepository<Product, String>{
             " from Product c ")
     Page<ProductPreview> getAllClothesPreviews(Pageable pageable);
 
-    @Query("select new net.codejava.store.product.models.view.CategoryPreview(c) " +
-            " from Product c ")
-    Page<CategoryPreview> getSubCate(Pageable pageable);
+//    @Query("select new net.codejava.store.product.models.view.CategoryPreview(c) " +
+//            " from Product c ")
+//    Page<CategoryPreview> getSubCate(Pageable pageable);
 
     @Query("select new net.codejava.store.product.models.view.ProductPreview(c) " +
             " from Product c where c.description = ?1")
     Page<ProductPreview> getProductBySubCate(Pageable pageable, String description);
 
-    @Query("select new net.codejava.store.product.models.view.ProductPreview(c) " +
-            " from Product c where c.category.id = ?1")
-    Page<ProductPreview> getProductByCategory(Pageable pageable, String id);
+//    @Query("select new net.codejava.store.product.models.view.ProductPreview(c) " +
+//            " from Product c where c.category.id = ?1")
+//    Page<ProductPreview> getProductByCategory(Pageable pageable, String id);
 
-    @Query("select new net.codejava.store.product.models.view.ProductPreview(c) from Product c where c.category.id = ?1")
-    Page<ProductPreview> getSimilarClothesPreviews(Pageable pageable, String categoryID);
+//    @Query("select new net.codejava.store.product.models.view.ProductPreview(c) from Product c where c.category.id = ?1")
+//    Page<ProductPreview> getSimilarClothesPreviews(Pageable pageable, String categoryID);
 
     @Query("select new net.codejava.store.product.models.view.ProductViewModel(c) from Product c where c.id = ?1")
     ProductViewModel getClothesViewModel(String clothesID);
