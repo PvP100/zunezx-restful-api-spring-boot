@@ -185,8 +185,8 @@ public class OrderController {
                 detail.addDetail(d);
                 detail.setOrder(order);
                 total += detail.getTotal();
-                p.setQuantity(p.getQuantity() - d.getQuantity());
-                productsRepository.save(p);
+//                p.setQuantity(p.getQuantity() - d.getQuantity());
+//                productsRepository.save(p);
                 orderDetailRepository.save(detail);
             }
             order.setTotal(total);

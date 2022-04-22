@@ -53,7 +53,7 @@ public interface ProductsRepository extends JpaRepository<Product, String>{
             "from Product p where p.name like %?1%")
     Page<ProductPreview> searchByName(Pageable pageable,String name);
 
-    long countByDescription(String description);
+    long countByCategory(int description);
 
     @Query(value = "select product.description, SUM(product.quantity) " +
             " from product  GROUP BY product.description", nativeQuery = true)

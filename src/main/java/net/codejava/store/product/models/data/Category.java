@@ -12,6 +12,15 @@ public class Category {
     private String title;
     private String imgUrl;
     private int quantity;
+    private int categoryTotalCount = 0;
+
+    public int getCategoryTotalCount() {
+        return categoryTotalCount;
+    }
+
+    public void setCategoryTotalCount(int categoryTotalCount) {
+        this.categoryTotalCount = categoryTotalCount;
+    }
 
     public int getQuantity() {
         return quantity;

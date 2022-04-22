@@ -6,16 +6,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import net.codejava.store.constants.Constant;
 import net.codejava.store.customer.dao.CustomerRespository;
-import net.codejava.store.customer.dao.FeedbackRepository;
-import net.codejava.store.customer.dao.RateRepository;
 import net.codejava.store.customer.models.body.OrderBody;
 import net.codejava.store.customer.models.body.ProfileBody;
-import net.codejava.store.customer.models.body.RateBody;
 import net.codejava.store.customer.models.body.SetOrderBody;
 import net.codejava.store.customer.models.data.Customer;
-import net.codejava.store.customer.models.data.Feedback;
 import net.codejava.store.customer.models.data.CustomerOrder;
-import net.codejava.store.customer.models.data.Rate;
 import net.codejava.store.customer.models.view.HeaderProfile;
 import net.codejava.store.customer.models.view.CustomerOrderPreview;
 import net.codejava.store.customer.models.view.Profile;
@@ -46,10 +41,6 @@ import java.util.Set;
 public class CustomerController {
     @Autowired
     CustomerRespository customerRespository;
-    @Autowired
-    FeedbackRepository feedbackRepository;
-    @Autowired
-    RateRepository rateRepository;
     @Autowired
     OrderRepository orderRepo;
     @Autowired
@@ -137,47 +128,47 @@ public class CustomerController {
 //        return response;
 //    }
     //Gui phan hoi
-    @ApiOperation(value = "Gưi phản hồi từ khách hàng", response = Iterable.class)
-    @PostMapping("/{customerID}/feedback")
-    Response feedback(@PathVariable("customerID") String customerID,
-                      @RequestBody String content) {
-        Response response;
-
-        try {
-            Customer customer = customerRespository.findOne(customerID);
-            if (customer == null) {
-                return new NotFoundResponse("Customer not existed!");
-            }
-            Feedback feedback = new Feedback(customer, content);
-            feedbackRepository.save(feedback);
-            response = new OkResponse();
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @ApiOperation(value = "Gưi phản hồi từ khách hàng", response = Iterable.class)
+//    @PostMapping("/{customerID}/feedback")
+//    Response feedback(@PathVariable("customerID") String customerID,
+//                      @RequestBody String content) {
+//        Response response;
+//
+//        try {
+//            Customer customer = customerRespository.findOne(customerID);
+//            if (customer == null) {
+//                return new NotFoundResponse("Customer not existed!");
+//            }
+//            Feedback feedback = new Feedback(customer, content);
+//            feedbackRepository.save(feedback);
+//            response = new OkResponse();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
     //Danh gia shop
-    @ApiOperation(value = "Đánh giá cửa hàng", response = Iterable.class)
-    @PutMapping("/{customerID}/rate")
-    Response rateShop(@PathVariable("customerID") String customerID,
-                      @RequestBody RateBody rateBody) {
-        Response response;
-        try {
-            Customer customer = customerRespository.findOne(customerID);
-            if (customer == null) {
-                return new NotFoundResponse("Customer not found");
-            }
-            Rate rate = new Rate(customer, rateBody);
-            rateRepository.save(rate);
-            response = new OkResponse("Success");
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @ApiOperation(value = "Đánh giá cửa hàng", response = Iterable.class)
+//    @PutMapping("/{customerID}/rate")
+//    Response rateShop(@PathVariable("customerID") String customerID,
+//                      @RequestBody RateBody rateBody) {
+//        Response response;
+//        try {
+//            Customer customer = customerRespository.findOne(customerID);
+//            if (customer == null) {
+//                return new NotFoundResponse("Customer not found");
+//            }
+//            Rate rate = new Rate(customer, rateBody);
+//            rateRepository.save(rate);
+//            response = new OkResponse("Success");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
 
     /**********************SaveClothes********************/

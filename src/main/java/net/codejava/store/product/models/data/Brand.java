@@ -11,6 +11,7 @@ public class Brand {
     private int id;
     private String brandName;
     private String imgUrl;
+    private int brandTotalCount = 0;
 
     public Brand() {
     }
@@ -19,6 +20,14 @@ public class Brand {
         this.id = id;
         this.imgUrl = imgUrl;
         this.brandName = brandType;
+    }
+
+    public int getBrandTotalCount() {
+        return brandTotalCount;
+    }
+
+    public void setBrandTotalCount(int brandTotalCount) {
+        this.brandTotalCount = brandTotalCount;
     }
 
     public String getBrandName() {

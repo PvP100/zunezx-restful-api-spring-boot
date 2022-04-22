@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,32 +110,6 @@ public class ProductController {
 //        }
 //        return response;
 //    }
-    @GetMapping("/categorys/{id}")
-    public Response getProductBySubCate(
-            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
-            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
-            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
-            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Product.CREATED_DATE)
-            @RequestParam(value = "sortBy", defaultValue = Product.CREATED_DATE) String sortBy,
-            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
-            @RequestParam(value = "sortType", defaultValue = "desc") String sortType,
-            @PathVariable("id") int id
-    ) {
-        Response response;
-
-        try {
-            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-            Page<ProductPreview> clothesPreviews = productsRepository.getProductByCategory(pageable, id);
-            response = new OkResponse(clothesPreviews);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
-
-
     /**********************detailClothes********************/
 //    @ApiOperation(value = "Lấy chi tiết sản phẩm", response = Iterable.class)
 //    @GetMapping("/{customerID}/clothes/{id}")
@@ -199,10 +174,11 @@ public class ProductController {
             return new NotFoundResponse("Thương hiệu không tồn tại");
         }
 
+
         Product product = new Product(name, (long) price, description, quantity, isSale, warranty);
         product.setCategory(category);
         product.setBrand(brand);
-        category.setQuantity(product.getQuantity());
+//        category.setQuantity(product.getQuantity());
         if (isSale == 1) {
             if (salePrice > price) {
                 return new ForbiddenResponse("Giá khuyến mãi phải nhỏ hơn giá gốc");
@@ -211,7 +187,8 @@ public class ProductController {
             product.setSalePrice((long) salePrice);
             product.setSalePercent(100 - (long) percent);
         }
-        categoryRepository.save(category);
+        categoryRepository.plusTotal(categoryID);
+//        categoryRepository.save(category);
         productsRepository.save(product);
         if(avatar != null){
             try {
@@ -338,11 +315,21 @@ public class ProductController {
 
     @ApiOperation(value = "api count product", response = Iterable.class)
     @PostMapping("/countSubCate/")
-    public Response countBySubCate(String des) {
+    public Response countBySubCate() {
         Response response;
         try {
-            Long x = productsRepository.countByDescription(des);
-            response = new OkResponse(x);
+            long product = productsRepository.count();
+            long order = orderRepository.count();
+            long category = categoryRepository.count();
+            long brand = brandRepository.count();
+            List<StaticView> list = new ArrayList<>();
+
+            list.add(new StaticView("product", product));
+            list.add(new StaticView("category", category));
+            list.add(new StaticView("order", order));
+            list.add(new StaticView("brand", brand));
+
+            response = new OkResponse(list);
         } catch (Exception e){
             e.printStackTrace();
             response = new ServerErrorResponse();
@@ -489,7 +476,6 @@ public class ProductController {
 //
 //    }
 
-    /**********************Clothes********************/
 
 //    @ApiOperation(value = "Lấy tất cả danh mục sản phẩm", response = Iterable.class)
 //    @GetMapping("/category")
