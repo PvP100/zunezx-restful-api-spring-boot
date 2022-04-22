@@ -8,7 +8,6 @@ import net.codejava.store.constants.Constant;
 import net.codejava.store.customer.dao.CustomerRespository;
 import net.codejava.store.customer.dao.FeedbackRepository;
 import net.codejava.store.customer.dao.RateRepository;
-import net.codejava.store.customer.dao.SaveClothesRepository;
 import net.codejava.store.customer.models.body.OrderBody;
 import net.codejava.store.customer.models.body.ProfileBody;
 import net.codejava.store.customer.models.body.RateBody;
@@ -20,13 +19,11 @@ import net.codejava.store.customer.models.data.Rate;
 import net.codejava.store.customer.models.view.HeaderProfile;
 import net.codejava.store.customer.models.view.CustomerOrderPreview;
 import net.codejava.store.customer.models.view.Profile;
-import net.codejava.store.customer.models.view.SaveClothesPreview;
 import net.codejava.store.product.controller.ProductController;
 import net.codejava.store.product.dao.CustomerOrderRepository;
 import net.codejava.store.product.dao.ProductsRepository;
 import net.codejava.store.product.dao.OrderRepository;
 import net.codejava.store.product.models.data.Product;
-import net.codejava.store.product.models.data.SaveClothes;
 import net.codejava.store.product.models.view.OrderStaticView;
 import net.codejava.store.response_model.NotFoundResponse;
 import net.codejava.store.response_model.OkResponse;
@@ -57,8 +54,6 @@ public class CustomerController {
     OrderRepository orderRepo;
     @Autowired
     private ProductsRepository productsRepository;
-    @Autowired
-    SaveClothesRepository saveClothesRepository;
     @Autowired
     private CustomerOrderRepository orderRepository;
 
@@ -114,33 +109,33 @@ public class CustomerController {
     }
 
 
-    @GetMapping("/{customerID}/clothes/{id}/state")
-    public Response getDetailClothesState(@PathVariable("customerID")String customerID,
-                                          @PathVariable("id") String clothesID) {
-        Response response;
-        try {
-            Product product = productsRepository.findById(clothesID);
-            if (product == null) {
-                return new NotFoundResponse("Clothes not Exist");
-            }
-
-            Customer customer = customerRespository.findOne(customerID);
-            if(customer==null){
-                return new NotFoundResponse("Customer not Exist");
-            }
-
-            if(saveClothesRepository.existsByCustomer_IdAndProduct_Id(customerID,clothesID)){
-                response = new OkResponse(true);
-            }else {
-                response = new OkResponse(false);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @GetMapping("/{customerID}/clothes/{id}/state")
+//    public Response getDetailClothesState(@PathVariable("customerID")String customerID,
+//                                          @PathVariable("id") String clothesID) {
+//        Response response;
+//        try {
+//            Product product = productsRepository.findById(clothesID);
+//            if (product == null) {
+//                return new NotFoundResponse("Clothes not Exist");
+//            }
+//
+//            Customer customer = customerRespository.findOne(customerID);
+//            if(customer==null){
+//                return new NotFoundResponse("Customer not Exist");
+//            }
+//
+//            if(saveClothesRepository.existsByCustomer_IdAndProduct_Id(customerID,clothesID)){
+//                response = new OkResponse(true);
+//            }else {
+//                response = new OkResponse(false);
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
     //Gui phan hoi
     @ApiOperation(value = "Gưi phản hồi từ khách hàng", response = Iterable.class)
     @PostMapping("/{customerID}/feedback")
@@ -186,75 +181,75 @@ public class CustomerController {
 
 
     /**********************SaveClothes********************/
-    @ApiOperation(value = "Api lưu sản phẩm", response = Iterable.class)
-    @GetMapping("/{customerID}/save_clothes")
-    public Response saveClothes(@PathVariable("customerID") String customerID,
-                                @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + SaveClothes.SAVED_DATE)
-                                @RequestParam(value = "sortBy", defaultValue = SaveClothes.SAVED_DATE) String sortBy,
-                                @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
-                                @RequestParam(value = "sortType", defaultValue = "desc") String sortType,
-                                @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
-                                @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
-                                @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
-                                @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Response response;
-        try {
-            Customer customer = customerRespository.findOne(customerID);
-            if (customer == null) {
-                return new NotFoundResponse("Customer not Exist");
-            }
-
-            Pageable pageable = PageAndSortRequestBuilder
-                    .createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-            Page<SaveClothesPreview> saveClothesPreviews = saveClothesRepository.getAllSavedClothes(customerID, pageable);
-
-            response = new OkResponse(saveClothesPreviews);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @ApiOperation(value = "Api lưu sản phẩm", response = Iterable.class)
+//    @GetMapping("/{customerID}/save_clothes")
+//    public Response saveClothes(@PathVariable("customerID") String customerID,
+//                                @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + SaveClothes.SAVED_DATE)
+//                                @RequestParam(value = "sortBy", defaultValue = SaveClothes.SAVED_DATE) String sortBy,
+//                                @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
+//                                @RequestParam(value = "sortType", defaultValue = "desc") String sortType,
+//                                @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
+//                                @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+//                                @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+//                                @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+//        Response response;
+//        try {
+//            Customer customer = customerRespository.findOne(customerID);
+//            if (customer == null) {
+//                return new NotFoundResponse("Customer not Exist");
+//            }
+//
+//            Pageable pageable = PageAndSortRequestBuilder
+//                    .createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+//            Page<SaveClothesPreview> saveClothesPreviews = saveClothesRepository.getAllSavedClothes(customerID, pageable);
+//
+//            response = new OkResponse(saveClothesPreviews);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
     //Lay chi tiet clothes
-    @ApiOperation(value = "Lấy chi tiết quần áo", response = Iterable.class)
-    @GetMapping("/clothes/{id}")
-    public Response getDetailClothes(@PathVariable("id") String clothesID) {
-        Response response;
-        try {
-            response = new OkResponse(productsRepository.findById(clothesID));
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
-    @ApiOperation(value = "Api Lưu quần áo", response = Iterable.class)
-    @PutMapping("/{customerID}/save_clothes/{id}")
-    public Response saveClothes(@PathVariable("customerID") String customerID,
-                                @PathVariable("id") String clothesID) {
-        Response response;
-        try {
-            Customer customer = customerRespository.findOne(customerID);
-            if (customer == null) {
-                return new NotFoundResponse("Customer not Exist");
-            }
-            Product product = productsRepository.findById(clothesID);
-            if (product == null) {
-                return new NotFoundResponse("Clothes not Exist");
-            }
-
-            product.addSave();
-            productsRepository.save(product);
-
-            saveClothesRepository.save(new SaveClothes(product, customer));
-            response = new OkResponse();
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @ApiOperation(value = "Lấy chi tiết quần áo", response = Iterable.class)
+//    @GetMapping("/clothes/{id}")
+//    public Response getDetailClothes(@PathVariable("id") String clothesID) {
+//        Response response;
+//        try {
+//            response = new OkResponse(productsRepository.findById(clothesID));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
+//    @ApiOperation(value = "Api Lưu quần áo", response = Iterable.class)
+//    @PutMapping("/{customerID}/save_clothes/{id}")
+//    public Response saveClothes(@PathVariable("customerID") String customerID,
+//                                @PathVariable("id") String clothesID) {
+//        Response response;
+//        try {
+//            Customer customer = customerRespository.findOne(customerID);
+//            if (customer == null) {
+//                return new NotFoundResponse("Customer not Exist");
+//            }
+//            Product product = productsRepository.findById(clothesID);
+//            if (product == null) {
+//                return new NotFoundResponse("Clothes not Exist");
+//            }
+//
+//            product.addSave();
+//            productsRepository.save(product);
+//
+//            saveClothesRepository.save(new SaveClothes(product, customer));
+//            response = new OkResponse();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
     @ApiOperation(value = "Api upload ảnh đại diện khách hàng.", response = Iterable.class)
     @PostMapping("/uploadavatar/{ctmID}")
@@ -277,45 +272,45 @@ public class CustomerController {
     void updateSaveClothes(String customerID, String clothesID) {
 //        saveClothesRepository.updateState(customerID,clothesID);
     }
-    @ApiOperation(value = "Api hủy lưu sản phẩm", response = Iterable.class)
-    @DeleteMapping("/{customerID}/save_clothes/{id}")
-    public Response deleteSaveClothes(@PathVariable("customerID") String customerID,
-                                      @PathVariable("id") String clothesID,
-                                      @ApiParam(name = "pageIndex", value = "index trang, mặc định là 0")
-                                      @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
-                                      @ApiParam(name = "pageSize", value = "Kích thước trang, mặc định và tối đa là " + Constant.MAX_PAGE_SIZE)
-                                      @RequestParam(value = "pageSize", required = false) Integer pageSize,
-                                      @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là : " + SaveClothes.SAVED_DATE)
-                                      @RequestParam(value = "pageIndex", defaultValue = SaveClothes.SAVED_DATE) String sortBy,
-                                      @ApiParam(name = "sortType", value = "Nhận asc|desc, mặc đính là desc")
-                                      @RequestParam(value = "pageSize", required = false, defaultValue = "desc") String sortType) {
-        Response response;
-        try {
-
-            Customer customer = customerRespository.findOne(customerID);
-            if (customer == null) {
-                return new NotFoundResponse("Customer not Exist");
-            }
-            Product product = productsRepository.findById(clothesID);
-            if (product == null) {
-                return new NotFoundResponse("Clothes not Exist");
-            }
-
-            product.subSave();
-            productsRepository.save(product);
-            saveClothesRepository.deleteByCustomer_idAndProduct_Id(customer.getId(), clothesID);
-
-            Pageable pageable = PageAndSortRequestBuilder
-                    .createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-            Page<SaveClothesPreview> saveClothesPreviews = saveClothesRepository.getAllSavedClothes(customerID, pageable);
-
-            response = new OkResponse(saveClothesPreviews);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @ApiOperation(value = "Api hủy lưu sản phẩm", response = Iterable.class)
+//    @DeleteMapping("/{customerID}/save_clothes/{id}")
+//    public Response deleteSaveClothes(@PathVariable("customerID") String customerID,
+//                                      @PathVariable("id") String clothesID,
+//                                      @ApiParam(name = "pageIndex", value = "index trang, mặc định là 0")
+//                                      @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+//                                      @ApiParam(name = "pageSize", value = "Kích thước trang, mặc định và tối đa là " + Constant.MAX_PAGE_SIZE)
+//                                      @RequestParam(value = "pageSize", required = false) Integer pageSize,
+//                                      @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là : " + SaveClothes.SAVED_DATE)
+//                                      @RequestParam(value = "pageIndex", defaultValue = SaveClothes.SAVED_DATE) String sortBy,
+//                                      @ApiParam(name = "sortType", value = "Nhận asc|desc, mặc đính là desc")
+//                                      @RequestParam(value = "pageSize", required = false, defaultValue = "desc") String sortType) {
+//        Response response;
+//        try {
+//
+//            Customer customer = customerRespository.findOne(customerID);
+//            if (customer == null) {
+//                return new NotFoundResponse("Customer not Exist");
+//            }
+//            Product product = productsRepository.findById(clothesID);
+//            if (product == null) {
+//                return new NotFoundResponse("Clothes not Exist");
+//            }
+//
+//            product.subSave();
+//            productsRepository.save(product);
+//            saveClothesRepository.deleteByCustomer_idAndProduct_Id(customer.getId(), clothesID);
+//
+//            Pageable pageable = PageAndSortRequestBuilder
+//                    .createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+//            Page<SaveClothesPreview> saveClothesPreviews = saveClothesRepository.getAllSavedClothes(customerID, pageable);
+//
+//            response = new OkResponse(saveClothesPreviews);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
     //Order
     @ApiOperation(value = "Api tạo order cho khách hàng", response = Iterable.class)

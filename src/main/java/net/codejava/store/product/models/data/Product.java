@@ -1,7 +1,7 @@
 package net.codejava.store.product.models.data;
 
 
-import net.codejava.store.product.models.body.ClothesBody;
+import net.codejava.store.product.models.body.ProductBody;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -17,16 +17,15 @@ public class Product {
     @GeneratedValue(generator = "uuid")
     private String id;
     private String name;
-    private double price;
+    private long price;
     @Column(columnDefinition = "TEXT")
     private String description;
     private Date createdDate;
     private String avatarUrl;
     private int isSale = 0;
-    private double salePrice = 0;
+    private long salePrice = 0;
     private int quantity;
-    private float salePercent;
-    private int totalSave;
+    private double salePercent;
     private String warranty;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name= "categoryID")
@@ -44,14 +43,11 @@ public class Product {
         this.brand = brand;
     }
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<RateClothes> rateClothes;
-
-    public double getSalePrice() {
+    public long getSalePrice() {
         return salePrice;
     }
 
-    public void setSalePrice(double salePrice) {
+    public void setSalePrice(long salePrice) {
         this.salePrice = salePrice;
     }
 
@@ -67,18 +63,17 @@ public class Product {
         this.warranty = warranty;
     }
 
-    public Product(ClothesBody body) {
+    public Product(ProductBody body) {
         this.name = body.getName();
         this.price = body.getPrice();
         this.description = body.getDescription();
         this.createdDate = new Date();
-        this.totalSave = 0;
         this.isSale = 0;
         this.quantity = 0;
         this.salePercent = 0;
     }
 
-    public Product(String name, double price, String description, int quantity, int isSale, String warranty) {
+    public Product(String name, long price, String description, int quantity, int isSale, String warranty) {
         this.name = name;
         this.price = price;
         this.description = description;
@@ -88,7 +83,7 @@ public class Product {
         this.warranty = warranty;
     }
 
-    public void update(ClothesBody body){
+    public void update(ProductBody body){
         this.name = body.getName();
         this.price = body.getPrice();
         this.description = body.getDescription();
@@ -142,27 +137,19 @@ public class Product {
         this.isSale = isSale;
     }
 
-    public float getSalePercent() {
+    public double getSalePercent() {
         return salePercent;
     }
 
-    public void setSalePercent(float salePercent) {
+    public void setSalePercent(long salePercent) {
         this.salePercent = salePercent;
     }
 
-    public Set<RateClothes> getRateClothes() {
-        return rateClothes;
-    }
-
-    public void setRateClothes(Set<RateClothes> rateClothes) {
-        this.rateClothes = rateClothes;
-    }
-
-    public double getPrice() {
+    public long getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(long price) {
         this.price = price;
     }
 
@@ -180,21 +167,5 @@ public class Product {
 
     public void setCategory(Category category) {
         this.category = category;
-    }
-
-    public int getTotalSave() {
-        return totalSave;
-    }
-
-    public void addSave(){
-        totalSave++;
-    }
-
-    public void subSave(){
-        totalSave--;
-    }
-
-    public void setTotalSave(int totalSave) {
-        this.totalSave = totalSave;
     }
 }

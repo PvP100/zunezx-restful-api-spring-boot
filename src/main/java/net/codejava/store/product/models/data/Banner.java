@@ -12,13 +12,23 @@ public class Banner {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
     private String imgUrl;
+    private String linkUrl;
 
     public Banner() {
     }
 
-    public Banner(int id, String imgUrl) {
+    public Banner(int id, String imgUrl, String linkUrl) {
         this.id = id;
         this.imgUrl = imgUrl;
+        this.linkUrl = linkUrl;
+    }
+
+    public String getLinkUrl() {
+        return linkUrl;
+    }
+
+    public void setLinkUrl(String linkUrl) {
+        this.linkUrl = linkUrl;
     }
 
     public int getId() {

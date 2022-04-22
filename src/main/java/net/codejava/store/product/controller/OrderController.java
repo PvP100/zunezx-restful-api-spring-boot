@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiParam;
 import net.codejava.store.auth.dao.UserRespository;
 import net.codejava.store.constants.Constant;
 import net.codejava.store.customer.dao.CustomerRespository;
-import net.codejava.store.customer.dao.SaveClothesRepository;
 import net.codejava.store.customer.models.data.Customer;
 import net.codejava.store.product.dao.*;
 import net.codejava.store.product.models.body.DetailBody;
@@ -36,13 +35,9 @@ public class OrderController {
     @Autowired
     private ProductsRepository productsRepository;
     @Autowired
-    private SaveClothesRepository saveClothesRepository;
-    @Autowired
     private UserRespository userRespository;
     @Autowired
     private CustomerRespository customerRespository;
-    @Autowired
-    private RateClothesRepository rateClothesRepository;
     @Autowired
     private CustomerOrderRepository customerOrderRepository;
     @Autowired

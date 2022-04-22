@@ -20,7 +20,7 @@ import net.codejava.store.customer.models.view.CustomerView;
 import net.codejava.store.notification.FCMService;
 import net.codejava.store.product.dao.CategoryRepository;
 import net.codejava.store.product.dao.ProductsRepository;
-import net.codejava.store.product.models.body.ClothesBody;
+import net.codejava.store.product.models.body.ProductBody;
 import net.codejava.store.product.models.data.Category;
 import net.codejava.store.product.models.data.Product;
 import net.codejava.store.response_model.NotFoundResponse;
@@ -29,23 +29,16 @@ import net.codejava.store.response_model.Response;
 import net.codejava.store.response_model.ServerErrorResponse;
 import net.codejava.store.utils.PageAndSortRequestBuilder;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.constraints.Null;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.*;
 
 @RestController
@@ -116,14 +109,14 @@ public class AdminController {
 
     @PostMapping("clothes/{categoryID}")
     Response insertClothes(@PathVariable("categoryID")int categoryID,
-                           @RequestBody ClothesBody clothesBody){
+                           @RequestBody ProductBody productBody){
         Response response;
         try {
             Category category = categoryRepository.findOne(categoryID);
             if(category == null){
                 return new NotFoundResponse("Category not exist!");
             }
-            Product product = new Product(clothesBody);
+            Product product = new Product(productBody);
             product.setCategory(category);
             productsRepository.save(product);
             List<User> users = userRespository.findAll();

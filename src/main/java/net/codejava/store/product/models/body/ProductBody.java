@@ -1,9 +1,9 @@
 package net.codejava.store.product.models.body;
 
-public class ClothesBody {
+public class ProductBody {
 
     private String name;
-    private double price;
+    private long price;
     private String description;
     private String size;
 
@@ -23,11 +23,11 @@ public class ClothesBody {
         this.name = name;
     }
 
-    public double getPrice() {
+    public long getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(long price) {
         this.price = price;
     }
 

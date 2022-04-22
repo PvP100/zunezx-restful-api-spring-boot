@@ -3,7 +3,6 @@ package net.codejava.store.product.models.view;
 
 import net.codejava.store.product.models.data.Category;
 import net.codejava.store.product.models.data.Product;
-import net.codejava.store.product.models.data.RateClothes;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -19,7 +18,6 @@ public class ProductViewModel {
     private String categoryTitle;
     private int categoryID;
     private int quantity;
-    private int numberSave;
     private boolean isSaved;
     private float avarageOfRate = 0;
 
@@ -37,8 +35,7 @@ public class ProductViewModel {
         this.categoryID = product.getCategory().getId();
         this.quantity = product.getQuantity();
         this.isSaved = false;
-        this.numberSave = product.getTotalSave();
-        setAvarageOfRate(getAvarageOfRate(product));
+//        setAvarageOfRate(getAvarageOfRate(product));
     }
 
     public int getQuantity() {
@@ -53,17 +50,17 @@ public class ProductViewModel {
         return avarageOfRate;
     }
 
-    public float getAvarageOfRate(Product product) {
-        if(product.getRateClothes().size()==0){
-            return 0;
-        }
-        int sum = 0;
-        for (RateClothes rateClothes : product.getRateClothes()) {
-            sum += rateClothes.getRating();
-        }
-
-        return (float) sum / product.getRateClothes().size();
-    }
+//    public float getAvarageOfRate(Product product) {
+//        if(product.getRateClothes().size()==0){
+//            return 0;
+//        }
+//        int sum = 0;
+//        for (RateClothes rateClothes : product.getRateClothes()) {
+//            sum += rateClothes.getRating();
+//        }
+//
+//        return (float) sum / product.getRateClothes().size();
+//    }
 
     public void setAvarageOfRate(float avarageOfRate) {
         this.avarageOfRate = avarageOfRate;
@@ -99,14 +96,6 @@ public class ProductViewModel {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public int getNumberSave() {
-        return numberSave;
-    }
-
-    public void setNumberSave(int numberSave) {
-        this.numberSave = numberSave;
     }
 
     public Date getCreatedDate() {

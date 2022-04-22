@@ -1,7 +1,6 @@
 package net.codejava.store.product.models.view;
 
 
-import net.codejava.store.product.models.data.RateClothes;
 
 public class RateClothesViewModel {
     private String customerName;
@@ -10,13 +9,13 @@ public class RateClothesViewModel {
     private String message;
     private int rating;
 
-    public RateClothesViewModel(RateClothes rateClothes) {
-        this.customerName = rateClothes.getCustomer().getFullName();
-        this.logoUrl = rateClothes.getCustomer().getAvatarUrl();
-        this.rateDate = rateClothes.getRateDate().getTime();
-        this.message = rateClothes.getMessage();
-        this.rating = rateClothes.getRating();
-    }
+//    public RateClothesViewModel(RateClothes rateClothes) {
+//        this.customerName = rateClothes.getCustomer().getFullName();
+//        this.logoUrl = rateClothes.getCustomer().getAvatarUrl();
+//        this.rateDate = rateClothes.getRateDate().getTime();
+//        this.message = rateClothes.getMessage();
+//        this.rating = rateClothes.getRating();
+//    }
 
     public RateClothesViewModel() {
     }

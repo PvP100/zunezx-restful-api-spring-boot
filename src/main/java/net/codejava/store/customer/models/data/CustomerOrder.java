@@ -17,7 +17,7 @@ public class CustomerOrder {
     @GeneratedValue(generator = "uuid")
     private String id;
     @OneToOne
-    @JoinColumn(name = "clothesID")
+    @JoinColumn(name = "productID")
     private Product product;
     @OneToOne
     @JoinColumn(name = "customerID")
