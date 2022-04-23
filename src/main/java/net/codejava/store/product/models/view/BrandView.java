@@ -6,11 +6,21 @@ public class BrandView {
     private int id;
     private String imgUrl;
     private String brandName;
+    private int totalCount;
 
     public BrandView(Brand brand) {
         this.id = brand.getId();
         this.imgUrl = brand.getImgUrl();
         this.brandName = brand.getBrandName();
+        this.totalCount = brand.getBrandTotalCount();
+    }
+
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
     }
 
     public int getId() {

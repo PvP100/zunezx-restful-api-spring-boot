@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products")
@@ -188,6 +189,7 @@ public class ProductController {
             product.setSalePercent(100 - (long) percent);
         }
         categoryRepository.plusTotal(categoryID);
+        brandRepository.plusTotal(brandId);
 //        categoryRepository.save(category);
         productsRepository.save(product);
         if(avatar != null){
@@ -240,6 +242,14 @@ public class ProductController {
         try {
             if (name != null) product.setName(name);
             if (description != null) product.setDescription(description);
+            Category category = categoryRepository.findOne(categoryID);
+            if (category != null) {
+                product.setCategory(category);
+            }
+            Brand brand = brandRepository.findOne(brandId);
+            if (brand != null) {
+                product.setBrand(brand);
+            }
             if (price != -1) product.setPrice((long) price);
             if (quantity != -1) product.setQuantity(quantity);
             if (!avatar.isEmpty()){
@@ -313,29 +323,29 @@ public class ProductController {
 //        return response;
 //    }
 
-    @ApiOperation(value = "api count product", response = Iterable.class)
-    @PostMapping("/countSubCate/")
-    public Response countBySubCate() {
-        Response response;
-        try {
-            long product = productsRepository.count();
-            long order = orderRepository.count();
-            long category = categoryRepository.count();
-            long brand = brandRepository.count();
-            List<StaticView> list = new ArrayList<>();
-
-            list.add(new StaticView("product", product));
-            list.add(new StaticView("category", category));
-            list.add(new StaticView("order", order));
-            list.add(new StaticView("brand", brand));
-
-            response = new OkResponse(list);
-        } catch (Exception e){
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @ApiOperation(value = "api count product", response = Iterable.class)
+//    @PostMapping("/countSubCate/")
+//    public Response countBySubCate() {
+//        Response response;
+//        try {
+//            long product = productsRepository.count();
+//            long order = orderRepository.count();
+//            long category = categoryRepository.count();
+//            long brand = brandRepository.count();
+//            List<StaticView> list = new ArrayList<>();
+//
+//            list.add(new StaticView("product", product));
+//            list.add(new StaticView("category", category));
+//            list.add(new StaticView("order", order));
+//            list.add(new StaticView("brand", brand));
+//
+//            response = new OkResponse(list);
+//        } catch (Exception e){
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
     @ApiOperation(value = "api search product", response = Iterable.class)
     @GetMapping("/searchProduct/{productName}")
@@ -368,21 +378,25 @@ public class ProductController {
     public Response Statistic () {
         Response response;
         try {
-            List<Object[]> data = productsRepository.countBySubCate();
-            Map<String, BigDecimal> map = null;
-            if (data != null && !data.isEmpty()){
-                map = new HashMap<>();
-                for (Object[] object: data) {
-                    map.put((String) object[0], (BigDecimal) object[1]);
-                }
-            }
+//            List<Object[]> data = productsRepository.countBySubCate();
+//            Map<String, BigDecimal> map = null;
+//            if (data != null && !data.isEmpty()){
+//                map = new HashMap<>();
+//                for (Object[] object: data) {
+//                    map.put((String) object[0], (BigDecimal) object[1]);
+//                }
+//            }
 
             long totalProduct = productsRepository.count();
             long totalOrder = orderRepository.count();
             long orderChecked = orderRepository.countByIsCheck(1);
             long orderUnchecked = orderRepository.countByIsCheck(0);
-            Double totalIncome = orderRepository.totalIncome();
-            ThongKeView view = new ThongKeView(totalProduct, totalIncome, totalOrder, orderChecked, orderUnchecked, map);
+//            Double totalIncome = orderRepository.totalIncome();
+            ThongKeView view = new ThongKeView(totalProduct, totalOrder, orderChecked, orderUnchecked);
+            view.setTotalCategory((int) categoryRepository.count());
+            view.setTotalBrand((int) brandRepository.count());
+            view.setCategory(categoryRepository.getAllCategory().stream().map( it -> new StaticView(it.getTitle(), it.getTotalCount())).collect(Collectors.toList()));
+            view.setBrand(brandRepository.getBrand().stream().map( it -> new StaticView(it.getBrandName(), it.getTotalCount())).collect(Collectors.toList()));
             response = new OkResponse(view);
         } catch (Exception e){
             e.printStackTrace();
@@ -391,33 +405,33 @@ public class ProductController {
         return response;
     }
 
-    /**********************similarClothes********************/
-    @ApiOperation(value = "Lấy danh sách quần áo tưởng đương", response = Iterable.class)
-    @GetMapping("/similarClothes/{id}")
-    public Response getSimilarClothes(@PathVariable("id") String clothesID,
-                                      @ApiParam(name = "pageIndex", value = "index trang, mặc định là 0")
-                                      @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
-                                      @ApiParam(name = "pageSize", value = "Kích thước trang, mặc định và tối đa là " + Constant.MAX_PAGE_SIZE)
-                                      @RequestParam(value = "pageSize", required = false) Integer pageSize,
-                                      @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Product.CREATED_DATE)
-                                      @RequestParam(value = "sortBy", defaultValue = Product.CREATED_DATE) String sortBy,
-                                      @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
-                                      @RequestParam(value = "sortType", defaultValue = "desc") String sortType) {
-        Response response;
-        try {
-            Product product = productsRepository.findOne(clothesID);
-            if (product == null) {
-                return new NotFoundResponse("Clothes not Exist");
-            }
-            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-            Page<ProductPreview> clothesPreviews = productsRepository.getSimilarClothesPreviews(pageable, product.getCategory().getId());
-            response = new OkResponse(clothesPreviews);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    /**********************similarClothes********************/
+//    @ApiOperation(value = "Lấy danh sách quần áo tưởng đương", response = Iterable.class)
+//    @GetMapping("/similarClothes/{id}")
+//    public Response getSimilarClothes(@PathVariable("id") String clothesID,
+//                                      @ApiParam(name = "pageIndex", value = "index trang, mặc định là 0")
+//                                      @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+//                                      @ApiParam(name = "pageSize", value = "Kích thước trang, mặc định và tối đa là " + Constant.MAX_PAGE_SIZE)
+//                                      @RequestParam(value = "pageSize", required = false) Integer pageSize,
+//                                      @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Product.CREATED_DATE)
+//                                      @RequestParam(value = "sortBy", defaultValue = Product.CREATED_DATE) String sortBy,
+//                                      @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
+//                                      @RequestParam(value = "sortType", defaultValue = "desc") String sortType) {
+//        Response response;
+//        try {
+//            Product product = productsRepository.findOne(clothesID);
+//            if (product == null) {
+//                return new NotFoundResponse("Clothes not Exist");
+//            }
+//            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+//            Page<ProductPreview> clothesPreviews = productsRepository.getSimilarClothesPreviews(pageable, product.getCategory().getId());
+//            response = new OkResponse(clothesPreviews);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
     /**********************SaveClothes********************/
 

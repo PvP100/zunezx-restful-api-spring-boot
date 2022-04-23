@@ -7,6 +7,7 @@ public class CategoryView {
     private String title;
     private int quantity;
     private String imgUrl;
+    private int totalCount;
 
     public CategoryView() {
     }
@@ -16,6 +17,15 @@ public class CategoryView {
         this.title = category.getTitle();
         this.quantity = category.getQuantity();
         this.imgUrl = category.getImgUrl();
+        this.totalCount = category.getCategoryTotalCount();
+    }
+
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
     }
 
     public String getImgUrl() {
