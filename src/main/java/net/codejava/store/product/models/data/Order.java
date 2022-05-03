@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "Orders")
+@Table(name = "orders")
 public class Order {
     public static final String CREATE_AT = "createAt";
 

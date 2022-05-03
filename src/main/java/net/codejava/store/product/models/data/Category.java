@@ -3,7 +3,7 @@ package net.codejava.store.product.models.data;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Category")
+@Table(name = "category")
 public class Category {
 
     @Id
@@ -11,7 +11,6 @@ public class Category {
     private int id;
     private String title;
     private String imgUrl;
-    private int quantity;
     private int categoryTotalCount = 0;
 
     public int getCategoryTotalCount() {
@@ -20,14 +19,6 @@ public class Category {
 
     public void setCategoryTotalCount(int categoryTotalCount) {
         this.categoryTotalCount = categoryTotalCount;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 
     public String getImgUrl() {

@@ -47,7 +47,7 @@ public class BannerController {
 
     @PutMapping("/updateBanner")
     @ApiOperation(value = "api sửa Banner", response = Iterable.class)
-    public Response updateBanner(@RequestParam String id, @RequestParam(value = "bannerAvatar") MultipartFile avatar) {
+    public Response updateBanner(@RequestParam int id, @RequestParam(value = "url") String url , @RequestParam(value = "bannerAvatar") MultipartFile avatar) {
         Response response;
         try {
             Banner banner = bannerRepository.getOne(id);
@@ -55,6 +55,7 @@ public class BannerController {
             String avatarUrl = ProductController.uploadFile("banner/" + uniqueImgUrl, uniqueImgUrl + "_avatar.jpg",
                     avatar.getBytes(), "image/jpeg");
             banner.setImgUrl(avatarUrl);
+            banner.setLinkUrl(url);
             bannerRepository.save(banner);
             response = new OkResponse();
         } catch (Exception e) {
@@ -80,4 +81,18 @@ public class BannerController {
         return response;
     }
 
+    @ApiOperation(value = "Api xóa banner", response = Iterable.class)
+    @DeleteMapping("/deleteBanner")
+    public Response deleteBrand(@RequestParam("id") int id) {
+        Response response;
+        try {
+            bannerRepository.delete(id);
+            response = new OkResponse();
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+
+    }
 }

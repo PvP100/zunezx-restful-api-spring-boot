@@ -10,6 +10,7 @@ public class ProductPreview {
     private String brand;
     private String logoUrl;
     private int quantity;
+    private String description;
     private int isSale;
     private double salePercent;
     private double salePrice;
@@ -26,6 +27,14 @@ public class ProductPreview {
         this.brand = brand;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public ProductPreview(Product product) {
         this.id = product.getId();
         this.name = product.getName();
@@ -38,6 +47,7 @@ public class ProductPreview {
         this.salePercent = product.getSalePercent();
         this.warranty = product.getWarranty();
         this.salePrice = product.getSalePrice();
+        this.description = product.getDescription();
     }
 
     public double getSalePrice() {

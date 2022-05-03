@@ -1,7 +1,6 @@
 package net.codejava.store.admin.models.view;
 
 
-import net.codejava.store.admin.models.StoreBranch;
 
 public class StoreBranchViewModel {
     private String id;
@@ -70,14 +69,5 @@ public class StoreBranchViewModel {
 
     public StoreBranchViewModel() {
 
-    }
-
-    public StoreBranchViewModel(StoreBranch storeBranch) {
-        this.id = storeBranch.getId();
-        this.branch_name = storeBranch.getBranch_name();
-        this.lat = storeBranch.getLat();
-        this.lng = storeBranch.getLng();
-        this.logoUrl = storeBranch.getLogoUrl();
-        this.address = storeBranch.getAddress();
     }
 }

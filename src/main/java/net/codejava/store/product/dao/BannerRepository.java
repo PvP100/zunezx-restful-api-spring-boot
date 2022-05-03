@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface BannerRepository extends JpaRepository<Banner, String> {
+public interface BannerRepository extends JpaRepository<Banner, Integer> {
 
     @Query("select new net.codejava.store.product.models.view.BannerView(b) " +
             " from Banner b ")

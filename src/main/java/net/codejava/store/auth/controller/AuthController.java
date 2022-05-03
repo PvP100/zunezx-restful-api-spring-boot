@@ -254,38 +254,38 @@ public class AuthController {
         return response;
     }
 
-    @ApiOperation(value = "Xac nhan email", response = Iterable.class)
-    @GetMapping("/registration/confirm/{username}")
-    public Response confirm_email(@PathVariable("username") String username) {
-        Response response;
-        try {
-            username += ".com";
-            if (userRespository.findByUsername(username) == null) {
-                return new NotFoundResponse("Email khong ton tai !");
-            }
-            userRespository.activeAccount(true, username);
-            response = new OkResponse();
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @ApiOperation(value = "Xac nhan email", response = Iterable.class)
+//    @GetMapping("/registration/confirm/{username}")
+//    public Response confirm_email(@PathVariable("username") String username) {
+//        Response response;
+//        try {
+//            username += ".com";
+//            if (userRespository.findByUsername(username) == null) {
+//                return new NotFoundResponse("Email khong ton tai !");
+//            }
+//            userRespository.activeAccount(true, username);
+//            response = new OkResponse();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
-    @ApiOperation(value = "Xac nhan email", response = Iterable.class)
-    @PostMapping("/resend/registration/confirm/{username}")
-    public Response resend_confirm_email(@PathVariable("username") String username) {
-        Response response;
-        try {
-            username += ".com";
-            SendEmailUtils.sendEmailActiveAccount(username);
-            response = new OkResponse();
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @ApiOperation(value = "Xac nhan email", response = Iterable.class)
+//    @PostMapping("/resend/registration/confirm/{username}")
+//    public Response resend_confirm_email(@PathVariable("username") String username) {
+//        Response response;
+//        try {
+//            username += ".com";
+//            SendEmailUtils.sendEmailActiveAccount(username);
+//            response = new OkResponse();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
     @ApiOperation(value = "Đổi mật khẩu", response = Iterable.class)
     @PostMapping("/customer/{customerID}/newPassword")

@@ -3,7 +3,7 @@ package net.codejava.store.product.models.data;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Brand")
+@Table(name = "brand")
 public class Brand {
 
     @Id

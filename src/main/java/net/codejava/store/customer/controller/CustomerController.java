@@ -81,14 +81,38 @@ public class CustomerController {
 
     @ApiOperation(value = "Update Profile", response = Iterable.class)
     @PutMapping("updateProfile/{id}")
-    Response updateProfile(@PathVariable("id") String customerID, @RequestBody ProfileBody profileBody) {
+    Response updateProfile(@PathVariable("id") String customerID, @RequestParam("updateType") int type, @RequestParam("updateProfile") String update, @RequestParam(value = "avatar", required = false) MultipartFile avatar) {
         Response response;
         try {
             Customer customer = customerRespository.findOne(customerID);
             if (customer == null) {
                 return new NotFoundResponse("Customer not exist!");
             }
-            customer.update(profileBody);
+            if (avatar != null) {
+                String avatarUrl = ProductController.uploadFile("customers/" + customerID, customerID + "_avatar.jpg",
+                        avatar.getBytes(), "image/jpeg");
+                customer.setAvatarUrl(avatarUrl);
+            }
+            switch (type) {
+                case 0:
+                    customer.setAddress(update);
+                    break;
+                case 1:
+                    customer.setBirthday(update);
+                    break;
+                case 2:
+                    customer.setEmail(update);
+                    break;
+                case 3:
+                    customer.setFullName(update);
+                    break;
+                case 4:
+                    customer.setGender(Integer.parseInt(update));
+                    break;
+                case 5:
+                    customer.setPhone(update);
+                    break;
+            }
             customerRespository.save(customer);
             Profile profile = new Profile(customer);
             response = new OkResponse(profile);
@@ -305,9 +329,9 @@ public class CustomerController {
 
     //Order
     @ApiOperation(value = "Api tạo order cho khách hàng", response = Iterable.class)
-    @PostMapping("/{customerID}/orders/{clothesID}")
+    @PostMapping("/{customerID}/orders/{productId}")
     public Response insertOrder(@PathVariable("customerID") String customerID,
-                                @PathVariable("clothesID") String clothesID,
+                                @PathVariable("productId") String productId,
                                 @RequestBody OrderBody orderBody) {
         Response response;
         try {
@@ -316,9 +340,9 @@ public class CustomerController {
                 return new NotFoundResponse("Customer not Exist");
             }
 
-            Product product = productsRepository.findOne(clothesID);
+            Product product = productsRepository.findOne(productId);
             if (product == null) {
-                return new NotFoundResponse("Clothes not Exist");
+                return new NotFoundResponse("Product not Exist");
             }
 
             CustomerOrder order = new CustomerOrder(product, customer, orderBody);

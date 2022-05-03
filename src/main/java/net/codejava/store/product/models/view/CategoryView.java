@@ -5,7 +5,6 @@ import net.codejava.store.product.models.data.Category;
 public class CategoryView {
     private int id;
     private String title;
-    private int quantity;
     private String imgUrl;
     private int totalCount;
 
@@ -15,7 +14,6 @@ public class CategoryView {
     public CategoryView(Category category) {
         this.id = category.getId();
         this.title = category.getTitle();
-        this.quantity = category.getQuantity();
         this.imgUrl = category.getImgUrl();
         this.totalCount = category.getCategoryTotalCount();
     }
@@ -50,14 +48,6 @@ public class CategoryView {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 
 }

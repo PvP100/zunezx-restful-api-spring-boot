@@ -18,6 +18,7 @@ import net.codejava.store.utils.PageAndSortRequestBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -135,24 +136,24 @@ public class ProductController {
 //        }
 //        return response;
 //    }
-    @ApiOperation(value = "Lấy chi tiết sản phẩm", response = Iterable.class)
-    @GetMapping("product/{id}")
-    public Response getDetailClothesWithoutAuth(
-            @PathVariable("id") String clothesID) {
-        Response response;
-        try {
-            Product product = productsRepository.findById(clothesID);
-            if (product == null) {
-                return new NotFoundResponse("Product not Exist");
-            }
-            ProductViewModel clothesViewModel = productsRepository.getClothesViewModel(clothesID);
-            response = new OkResponse(clothesViewModel);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @ApiOperation(value = "Lấy chi tiết sản phẩm", response = Iterable.class)
+//    @GetMapping("product/{id}")
+//    public Response getDetailClothesWithoutAuth(
+//            @PathVariable("id") String clothesID) {
+//        Response response;
+//        try {
+//            Product product = productsRepository.findById(clothesID);
+//            if (product == null) {
+//                return new NotFoundResponse("Product not Exist");
+//            }
+//            ProductViewModel clothesViewModel = productsRepository.getClothesViewModel(clothesID);
+//            response = new OkResponse(clothesViewModel);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
     @ApiOperation(value = "api Thêm mới sản phẩm", response = Iterable.class)
     @RequestMapping(path = "/add", method = RequestMethod.POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
@@ -179,7 +180,6 @@ public class ProductController {
         Product product = new Product(name, (long) price, description, quantity, isSale, warranty);
         product.setCategory(category);
         product.setBrand(brand);
-//        category.setQuantity(product.getQuantity());
         if (isSale == 1) {
             if (salePrice > price) {
                 return new ForbiddenResponse("Giá khuyến mãi phải nhỏ hơn giá gốc");
@@ -188,9 +188,8 @@ public class ProductController {
             product.setSalePrice((long) salePrice);
             product.setSalePercent(100 - (long) percent);
         }
-        categoryRepository.plusTotal(categoryID);
-        brandRepository.plusTotal(brandId);
-//        categoryRepository.save(category);
+        categoryRepository.plusTotal(categoryID, quantity);
+        brandRepository.plusTotal(brandId, quantity);
         productsRepository.save(product);
         if(avatar != null){
             try {
@@ -223,10 +222,10 @@ public class ProductController {
     }
 
     @ApiOperation(value = "api update sản phẩm", response = Iterable.class)
-    @RequestMapping(path = "/updateProduct/{productID}", method = RequestMethod.PUT, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @RequestMapping(path = "/updateProduct/{productId}", method = RequestMethod.PUT, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public Response updateClothes(@RequestParam("categoryId") int categoryID,
                                   @RequestParam("brandId") int brandId,
-                                  @RequestParam("productId") String productID,
+                                  @PathVariable("productId") String productID,
                                   @RequestParam(value = "name",required = true) String name,
                                   @RequestParam(value = "description",required = true) String description,
                                   @RequestParam(value = "price",required = true) double price,
@@ -391,11 +390,12 @@ public class ProductController {
             long totalOrder = orderRepository.count();
             long orderChecked = orderRepository.countByIsCheck(1);
             long orderUnchecked = orderRepository.countByIsCheck(0);
+            long orderCanceled = orderRepository.countByIsCheck(-1);
 //            Double totalIncome = orderRepository.totalIncome();
-            ThongKeView view = new ThongKeView(totalProduct, totalOrder, orderChecked, orderUnchecked);
+            ThongKeView view = new ThongKeView(totalProduct, totalOrder, orderChecked, orderUnchecked, orderCanceled);
             view.setTotalCategory((int) categoryRepository.count());
             view.setTotalBrand((int) brandRepository.count());
-            view.setCategory(categoryRepository.getAllCategory().stream().map( it -> new StaticView(it.getTitle(), it.getTotalCount())).collect(Collectors.toList()));
+            view.setCategory(categoryRepository.getListCategory().stream().map( it -> new StaticView(it.getTitle(), it.getTotalCount())).collect(Collectors.toList()));
             view.setBrand(brandRepository.getBrand().stream().map( it -> new StaticView(it.getBrandName(), it.getTotalCount())).collect(Collectors.toList()));
             response = new OkResponse(view);
         } catch (Exception e){

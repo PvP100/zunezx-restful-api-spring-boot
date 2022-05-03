@@ -24,6 +24,6 @@ public interface BrandRepository extends JpaRepository<Brand, Integer> {
 
     @Transactional
     @Modifying
-    @Query("update Brand b set b.brandTotalCount = b.brandTotalCount + 1 WHERE b.id = :id")
-    void plusTotal(@Param("id") int id);
+    @Query("update Brand b set b.brandTotalCount = b.brandTotalCount + :count WHERE b.id = :id")
+    void plusTotal(@Param("id") int id, @Param("count") int count);
 }

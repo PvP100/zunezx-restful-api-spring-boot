@@ -1,11 +1,10 @@
 package net.codejava.store.product.models.data;
 
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Banner")
+@Table(name = "banner")
 public class Banner {
 
     @Id

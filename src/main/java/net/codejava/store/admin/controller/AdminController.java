@@ -4,9 +4,6 @@ package net.codejava.store.admin.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import net.codejava.store.admin.dao.ApplicationVersionRepository;
-import net.codejava.store.admin.dao.StoreBranchRepository;
-import net.codejava.store.admin.models.StoreBranch;
 import net.codejava.store.admin.models.body.LatLngBody;
 import net.codejava.store.admin.models.body.StoreBranchBody;
 import net.codejava.store.admin.models.view.StoreBranchViewModel;
@@ -46,8 +43,7 @@ import java.util.*;
 @Api(value = "Admin-api", description = "Nhóm API Admin, Yêu cầu access token của Admin")
 @CrossOrigin(origins = "*")
 public class AdminController {
-    @Autowired
-    StoreBranchRepository storeBranchRepository;
+
     @PersistenceContext
     EntityManager entityManager;
     @Autowired
@@ -59,77 +55,75 @@ public class AdminController {
     @Autowired
     UserRespository userRespository;
     @Autowired
-    ApplicationVersionRepository applicationVersionRepository;
-    @Autowired
     CustomerRespository customerRespository;
 
-    @GetMapping("/version")
-    Response getVersionApp(){
-        Response response;
-        try {
-            int version = applicationVersionRepository.findAll().get(0).getVersion();
-            response = new OkResponse(version);
-        }catch (Exception e){
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @GetMapping("/version")
+//    Response getVersionApp(){
+//        Response response;
+//        try {
+//            int version = applicationVersionRepository.findAll().get(0).getVersion();
+//            response = new OkResponse(version);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
-    @ApiOperation(value = "thêm một chi nhánh cho công ty", response = Iterable.class)
-    @PostMapping("/store_branch")
-    Response InsertBranch(@RequestBody StoreBranchBody storeBranchBody) {
-        Response response;
-        try {
-            StoreBranch storeBranch = new StoreBranch(storeBranchBody);
-            storeBranchRepository.save(storeBranch);
-            response = new OkResponse();
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @ApiOperation(value = "thêm một chi nhánh cho công ty", response = Iterable.class)
+//    @PostMapping("/store_branch")
+//    Response InsertBranch(@RequestBody StoreBranchBody storeBranchBody) {
+//        Response response;
+//        try {
+//            StoreBranch storeBranch = new StoreBranch(storeBranchBody);
+//            storeBranchRepository.save(storeBranch);
+//            response = new OkResponse();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
-    @ApiOperation(value = "Lấy tất cả chi nhánh công ty", response = Iterable.class)
-    @GetMapping("/store_branch")
-    Response getAllBranch() {
-        Response response;
-        try {
-            Sort sort = PageAndSortRequestBuilder.createSortRequest(StoreBranch.CREATED_DATE, "desc");
-            List<StoreBranchViewModel> lsBranch = storeBranchRepository.getStoreBranchViewModel(sort);
-            response = new OkResponse(lsBranch);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
+//    @ApiOperation(value = "Lấy tất cả chi nhánh công ty", response = Iterable.class)
+//    @GetMapping("/store_branch")
+//    Response getAllBranch() {
+//        Response response;
+//        try {
+//            Sort sort = PageAndSortRequestBuilder.createSortRequest(StoreBranch.CREATED_DATE, "desc");
+//            List<StoreBranchViewModel> lsBranch = storeBranchRepository.getStoreBranchViewModel(sort);
+//            response = new OkResponse(lsBranch);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//
+//        return response;
+//    }
 
-        return response;
-    }
-
-    @PostMapping("clothes/{categoryID}")
-    Response insertClothes(@PathVariable("categoryID")int categoryID,
-                           @RequestBody ProductBody productBody){
-        Response response;
-        try {
-            Category category = categoryRepository.findOne(categoryID);
-            if(category == null){
-                return new NotFoundResponse("Category not exist!");
-            }
-            Product product = new Product(productBody);
-            product.setCategory(category);
-            productsRepository.save(product);
-            List<User> users = userRespository.findAll();
-            for (User u:users){
-                FCMService.sendNotification(restTemplate,u.getFcmToken(), product);
-            }
-            response = new OkResponse(product);
-        }catch (Exception e){
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @PostMapping("clothes/{categoryID}")
+//    Response insertClothes(@PathVariable("categoryID")int categoryID,
+//                           @RequestBody ProductBody productBody){
+//        Response response;
+//        try {
+//            Category category = categoryRepository.findOne(categoryID);
+//            if(category == null){
+//                return new NotFoundResponse("Category not exist!");
+//            }
+//            Product product = new Product(productBody);
+//            product.setCategory(category);
+//            productsRepository.save(product);
+//            List<User> users = userRespository.findAll();
+//            for (User u:users){
+//                FCMService.sendNotification(restTemplate,u.getFcmToken(), product);
+//            }
+//            response = new OkResponse(product);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
 
 
@@ -227,42 +221,42 @@ public class AdminController {
         return null;
     }
 
-    @ApiOperation(value = "khoảng cách các chi nhánh của công ty", response = Iterable.class)
-    @PostMapping("/store_branch_distance")
-    Response getAllBranchViewModel(@Null @RequestBody LatLngBody latLngBody,
-                                   @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là : " + StoreBranch.CREATED_DATE)
-                                   @RequestParam(value = "pageIndex", defaultValue = StoreBranch.CREATED_DATE) String sortBy,
-                                   @ApiParam(name = "sortType", value = "Nhận asc|desc, mặc đính là desc")
-                                   @RequestParam(value = "pageSize", required = false, defaultValue = "desc") String sortType) {
-        Response response;
-        try {
-            Sort sort = PageAndSortRequestBuilder.createSortRequest(sortBy, sortType);
-            List<StoreBranchViewModel> lsBranch = storeBranchRepository.getStoreBranchViewModel(sort);
-            for (StoreBranchViewModel storeBranchViewModel : lsBranch) {
-                if (latLngBody.getLat() != -1&&latLngBody.getLng()!=-1) {
-                    storeBranchViewModel.setDistance(distance(storeBranchViewModel.getLat(), storeBranchViewModel.getLng(),
-                            latLngBody.getLat(), latLngBody.getLng()));
-                } else {
-                    storeBranchViewModel.setDistance(-1);
-                }
-
-            }
-            Collections.sort(lsBranch, new Comparator<StoreBranchViewModel>() {
-                @Override
-                public int compare(StoreBranchViewModel storeBranchViewModel, StoreBranchViewModel t1) {
-                    if (storeBranchViewModel.getDistance() > t1.getDistance())
-                        return -1;
-                    return 1;
-                }
-            });
-            response = new OkResponse(lsBranch);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-
-        return response;
-    }
+//    @ApiOperation(value = "khoảng cách các chi nhánh của công ty", response = Iterable.class)
+//    @PostMapping("/store_branch_distance")
+//    Response getAllBranchViewModel(@Null @RequestBody LatLngBody latLngBody,
+//                                   @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là : " + StoreBranch.CREATED_DATE)
+//                                   @RequestParam(value = "pageIndex", defaultValue = StoreBranch.CREATED_DATE) String sortBy,
+//                                   @ApiParam(name = "sortType", value = "Nhận asc|desc, mặc đính là desc")
+//                                   @RequestParam(value = "pageSize", required = false, defaultValue = "desc") String sortType) {
+//        Response response;
+//        try {
+//            Sort sort = PageAndSortRequestBuilder.createSortRequest(sortBy, sortType);
+//            List<StoreBranchViewModel> lsBranch = storeBranchRepository.getStoreBranchViewModel(sort);
+//            for (StoreBranchViewModel storeBranchViewModel : lsBranch) {
+//                if (latLngBody.getLat() != -1&&latLngBody.getLng()!=-1) {
+//                    storeBranchViewModel.setDistance(distance(storeBranchViewModel.getLat(), storeBranchViewModel.getLng(),
+//                            latLngBody.getLat(), latLngBody.getLng()));
+//                } else {
+//                    storeBranchViewModel.setDistance(-1);
+//                }
+//
+//            }
+//            Collections.sort(lsBranch, new Comparator<StoreBranchViewModel>() {
+//                @Override
+//                public int compare(StoreBranchViewModel storeBranchViewModel, StoreBranchViewModel t1) {
+//                    if (storeBranchViewModel.getDistance() > t1.getDistance())
+//                        return -1;
+//                    return 1;
+//                }
+//            });
+//            response = new OkResponse(lsBranch);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//
+//        return response;
+//    }
 
     //Api QLKH
     @ApiOperation(value = "lấy danh sách khách hàng", response = Iterable.class)
@@ -289,36 +283,36 @@ public class AdminController {
         return response;
     }
 
-    @ApiOperation(value = "sửa thông tin khách hàng", response = Iterable.class)
-    @PutMapping("/updatecustomer/{customerID}")
-    Response updateCustomer(@PathVariable("customerID") String customerID,
-                            @RequestBody ProfileBody body){
-        Response response;
-        try {
-            Customer customer = customerRespository.getOne(customerID);
-            customer.update(body);
-            customerRespository.save(customer);
-            response = new OkResponse();
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @ApiOperation(value = "sửa thông tin khách hàng", response = Iterable.class)
+//    @PutMapping("/updatecustomer/{customerID}")
+//    Response updateCustomer(@PathVariable("customerID") String customerID,
+//                            @RequestBody ProfileBody body){
+//        Response response;
+//        try {
+//            Customer customer = customerRespository.getOne(customerID);
+//            customer.update(body);
+//            customerRespository.save(customer);
+//            response = new OkResponse();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
-    @ApiOperation(value = "xóa khách hàng như xóa số nyc :)", response = Iterable.class)
-    @PostMapping("/deletecustomer")
-    Response deleteCustomer(String ID){
-        Response response;
-        try {
-            customerRespository.delete(ID);
-            response = new OkResponse();
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @ApiOperation(value = "xóa khách hàng như xóa số nyc :)", response = Iterable.class)
+//    @PostMapping("/deletecustomer")
+//    Response deleteCustomer(String ID){
+//        Response response;
+//        try {
+//            customerRespository.delete(ID);
+//            response = new OkResponse();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
 
     private static double distance(double lat1, double lon1, double lat2, double lon2) {
         double theta = lon1 - lon2;

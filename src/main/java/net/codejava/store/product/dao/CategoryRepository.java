@@ -16,7 +16,11 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     @Query("select new net.codejava.store.product.models.view.CategoryView(c) " +
             " from Category c ")
-    List<CategoryView> getAllCategory();
+    Page<CategoryView> getAllCategory(Pageable pageable);
+
+    @Query("select new net.codejava.store.product.models.view.CategoryView(c) " +
+            " from Category c ")
+    List<CategoryView> getListCategory();
 
     @Query("select new net.codejava.store.product.models.view.CategoryView(c) " +
             " from Category c ")
@@ -24,8 +28,8 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     @Transactional
     @Modifying
-    @Query("update Category c set c.categoryTotalCount = c.categoryTotalCount + 1 WHERE c.id = :id")
-    void plusTotal(@Param("id") int id);
+    @Query("update Category c set c.categoryTotalCount = c.categoryTotalCount + :count WHERE c.id = :id")
+    void plusTotal(@Param("id") int id, @Param("count") int count);
 
     @Query("select new net.codejava.store.product.models.view.CategoryView(c) " +
             "from Category c where c.title like %?1%")

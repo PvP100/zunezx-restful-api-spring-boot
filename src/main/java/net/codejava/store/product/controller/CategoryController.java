@@ -45,11 +45,21 @@ public class CategoryController {
     /**********************Category********************/
     @ApiOperation(value = "Lấy toàn bộ danh mục", response = Iterable.class)
     @GetMapping("/categories")
-    public Response getAllClothes() {
+    public Response getAllClothes(
+            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
+            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + "id")
+            @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
+            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
+            @RequestParam(value = "sortType", defaultValue = "desc") String sortType
+    ) {
         Response response;
 
         try {
-            List<CategoryView> categoryView = categoryRepository.getAllCategory();
+            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+            Page<CategoryView> categoryView = categoryRepository.getAllCategory(pageable);
             response = new OkResponse(categoryView);
         } catch (Exception e) {
             e.printStackTrace();

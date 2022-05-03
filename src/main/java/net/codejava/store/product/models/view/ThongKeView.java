@@ -9,6 +9,7 @@ public class ThongKeView {
     private long totalOrder;
     private long orderChecked;
     private long orderUnchecked;
+    private long orderCanceled;
     private int totalCategory;
     private int totalBrand;
     private List<StaticView> category;
@@ -18,11 +19,20 @@ public class ThongKeView {
     public ThongKeView() {
     }
 
-    public ThongKeView(long totalProduct, long totalOrder, long orderChecked, long orderUnchecked) {
+    public long getOrderCanceled() {
+        return orderCanceled;
+    }
+
+    public void setOrderCanceled(long orderCanceled) {
+        this.orderCanceled = orderCanceled;
+    }
+
+    public ThongKeView(long totalProduct, long totalOrder, long orderChecked, long orderUnchecked, long orderCanceled) {
         this.totalProduct = totalProduct;
         this.totalOrder = totalOrder;
         this.orderChecked = orderChecked;
         this.orderUnchecked = orderUnchecked;
+        this.orderCanceled = orderCanceled;
     }
 
     public int getTotalCategory() {

@@ -6,7 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "OrderDetail")
+@Table(name = "order_detail")
 public class OrderDetail {
     public static final String ID = "id";
 
@@ -15,11 +15,11 @@ public class OrderDetail {
     @GeneratedValue(generator = "uuid")
     private String id;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
     @JoinColumn(name= "OrderId")
     private Order order;
 
-    @OneToOne(cascade = {CascadeType.ALL})
+    @OneToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name= "ProductId")
     private Product product;
 
