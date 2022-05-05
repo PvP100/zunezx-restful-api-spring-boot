@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @RestController
@@ -391,12 +392,21 @@ public class ProductController {
             long orderChecked = orderRepository.countByIsCheck(1);
             long orderUnchecked = orderRepository.countByIsCheck(0);
             long orderCanceled = orderRepository.countByIsCheck(-1);
+            long totalRevenue = orderRepository.getTotalPrice();
 //            Double totalIncome = orderRepository.totalIncome();
-            ThongKeView view = new ThongKeView(totalProduct, totalOrder, orderChecked, orderUnchecked, orderCanceled);
+            ThongKeView view = new ThongKeView(totalProduct, totalOrder, orderChecked, orderUnchecked, orderCanceled, totalRevenue);
             view.setTotalCategory((int) categoryRepository.count());
             view.setTotalBrand((int) brandRepository.count());
-            view.setCategory(categoryRepository.getListCategory().stream().map( it -> new StaticView(it.getTitle(), it.getTotalCount())).collect(Collectors.toList()));
-            view.setBrand(brandRepository.getBrand().stream().map( it -> new StaticView(it.getBrandName(), it.getTotalCount())).collect(Collectors.toList()));
+
+            AtomicInteger categoryIndex = new AtomicInteger();
+            AtomicInteger brandIndex = new AtomicInteger();
+
+            view.setCategory(
+                    categoryRepository.getListCategory().stream().map( it ->
+                            new StaticView(categoryIndex.incrementAndGet(), it.getTitle(), it.getTotalCount())).collect(Collectors.toList()
+                    )
+            );
+            view.setBrand(brandRepository.getBrand().stream().map( it -> new StaticView(brandIndex.incrementAndGet(), it.getBrandName(), it.getTotalCount())).collect(Collectors.toList()));
             response = new OkResponse(view);
         } catch (Exception e){
             e.printStackTrace();

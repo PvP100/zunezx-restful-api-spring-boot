@@ -20,6 +20,7 @@ import net.codejava.store.product.dao.ProductsRepository;
 import net.codejava.store.product.models.body.ProductBody;
 import net.codejava.store.product.models.data.Category;
 import net.codejava.store.product.models.data.Product;
+import net.codejava.store.product.models.view.ProductPreview;
 import net.codejava.store.response_model.NotFoundResponse;
 import net.codejava.store.response_model.OkResponse;
 import net.codejava.store.response_model.Response;
@@ -257,6 +258,32 @@ public class AdminController {
 //
 //        return response;
 //    }
+
+    @ApiOperation(value = "api search customer", response = Iterable.class)
+    @GetMapping("/searchCustomer")
+    public Response searchProduct(
+            @RequestParam("customerName") String customerName,
+            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
+            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Customer.FULLNAME)
+            @RequestParam(value = "sortBy", defaultValue = Customer.FULLNAME) String sortBy,
+            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
+            @RequestParam(value = "sortType", defaultValue = "desc") String sortType
+    ) {
+        Response response;
+
+        try {
+            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+            Page<CustomerView> categoryView = customerRespository.searchByName(pageable, customerName);
+            response = new OkResponse(categoryView);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
 
     //Api QLKH
     @ApiOperation(value = "lấy danh sách khách hàng", response = Iterable.class)

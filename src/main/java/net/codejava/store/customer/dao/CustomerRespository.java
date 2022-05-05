@@ -4,6 +4,7 @@ import net.codejava.store.customer.models.data.Customer;
 import net.codejava.store.customer.models.view.CustomerView;
 import net.codejava.store.customer.models.view.HeaderProfile;
 import net.codejava.store.customer.models.view.Profile;
+import net.codejava.store.product.models.view.ProductPreview;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +27,8 @@ public interface CustomerRespository extends JpaRepository<Customer,String> {
     @Query("select new net.codejava.store.customer.models.view.CustomerView(c) " +
             " from Customer c ")
     Page<CustomerView> getListCustomer(Pageable pageable);
+
+    @Query("select new net.codejava.store.customer.models.view.CustomerView(c) " +
+            "from Customer c where c.fullName like %?1%")
+    Page<CustomerView> searchByName(Pageable pageable, String name);
 }

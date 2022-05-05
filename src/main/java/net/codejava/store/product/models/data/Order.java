@@ -25,7 +25,7 @@ public class Order {
     private String address;
     private Date createAt;
     private Date updateAt;
-    private double total;
+    private long total;
     private int isCheck;
     private int totalProduct;
 
@@ -110,7 +110,7 @@ public class Order {
         return total;
     }
 
-    public void setTotal(double total) {
+    public void setTotal(long total) {
         this.total = total;
     }
 

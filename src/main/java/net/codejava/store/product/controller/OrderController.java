@@ -174,7 +174,7 @@ public class OrderController {
             Order order = new Order();
             order.setCustomer(c);
             order.addOrder(body);
-            double total = 0;
+            long total = 0;
             for (DetailBody d : body.getDetails()) {
                 Product p = productsRepository.getOne(d.getProductId());
                 if (p.getQuantity() < d.getQuantity()){

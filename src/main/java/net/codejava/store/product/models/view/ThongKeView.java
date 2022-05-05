@@ -7,6 +7,7 @@ import java.util.Map;
 public class ThongKeView {
     private long totalProduct;
     private long totalOrder;
+    private long totalRevenue;
     private long orderChecked;
     private long orderUnchecked;
     private long orderCanceled;
@@ -27,12 +28,21 @@ public class ThongKeView {
         this.orderCanceled = orderCanceled;
     }
 
-    public ThongKeView(long totalProduct, long totalOrder, long orderChecked, long orderUnchecked, long orderCanceled) {
+    public ThongKeView(long totalProduct, long totalOrder, long orderChecked, long orderUnchecked, long orderCanceled, long totalRevenue) {
         this.totalProduct = totalProduct;
         this.totalOrder = totalOrder;
         this.orderChecked = orderChecked;
         this.orderUnchecked = orderUnchecked;
         this.orderCanceled = orderCanceled;
+        this.totalRevenue = totalRevenue;
+    }
+
+    public long getTotalRevenue() {
+        return totalRevenue;
+    }
+
+    public void setTotalRevenue(long totalRevenue) {
+        this.totalRevenue = totalRevenue;
     }
 
     public int getTotalCategory() {

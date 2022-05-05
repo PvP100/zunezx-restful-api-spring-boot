@@ -51,6 +51,9 @@ public interface OrderRepository extends JpaRepository<Order,Integer> {
             " from Order o where o.customer.id = ?1 and o.isCheck = 1")
     List<OrderPreview> getOrderCheckedByCustomerId(String id);
 
+    @Query(value = "select COALESCE(sum(total), 0) from orders where isCheck = 1", nativeQuery = true)
+    long getTotalPrice();
+
     @Query("select new net.codejava.store.product.models.view.OrderPreview(o)" +
             " from Order o where o.customer.id = ?1 and o.isCheck = 0")
     List<OrderPreview> getOrderUncheckedByCustomerId(String id);
