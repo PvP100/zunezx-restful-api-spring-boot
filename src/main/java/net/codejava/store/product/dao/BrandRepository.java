@@ -16,7 +16,11 @@ public interface BrandRepository extends JpaRepository<Brand, Integer> {
 
     @Query("select new net.codejava.store.product.models.view.BrandView(b) " +
             " from Brand b ")
-    List<BrandView> getBrand();
+    Page<BrandView> getBrand(Pageable pageable);
+
+    @Query("select new net.codejava.store.product.models.view.BrandView(b) " +
+            " from Brand b ")
+    List<BrandView> getAllBrand();
 
     @Query("select new net.codejava.store.product.models.view.BrandView(b) " +
             "from Brand b where b.brandName like %?1%")

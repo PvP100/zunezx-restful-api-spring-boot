@@ -406,7 +406,7 @@ public class ProductController {
                             new StaticView(categoryIndex.incrementAndGet(), it.getTitle(), it.getTotalCount())).collect(Collectors.toList()
                     )
             );
-            view.setBrand(brandRepository.getBrand().stream().map( it -> new StaticView(brandIndex.incrementAndGet(), it.getBrandName(), it.getTotalCount())).collect(Collectors.toList()));
+            view.setBrand(brandRepository.getAllBrand().stream().map( it -> new StaticView(brandIndex.incrementAndGet(), it.getBrandName(), it.getTotalCount())).collect(Collectors.toList()));
             response = new OkResponse(view);
         } catch (Exception e){
             e.printStackTrace();

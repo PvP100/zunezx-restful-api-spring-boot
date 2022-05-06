@@ -34,12 +34,22 @@ public class BrandController {
 
     @ApiOperation(value = "Lấy brand", response = Iterable.class)
     @GetMapping("/getBrand")
-    public Response getBrand() {
+    public Response getBrand(
+            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
+            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + "id")
+            @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
+            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
+            @RequestParam(value = "sortType", defaultValue = "desc") String sortType
+    ) {
         Response response;
 
         try {
-            List<BrandView> bannerViews = brandRepository.getBrand();
-            response = new OkResponse(bannerViews);
+            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+            Page<BrandView> brandViews = brandRepository.getBrand(pageable);
+            response = new OkResponse(brandViews);
         } catch (Exception e) {
             e.printStackTrace();
             response = new BannerErrorResponse(e.getLocalizedMessage());
