@@ -61,4 +61,16 @@ public interface OrderRepository extends JpaRepository<Order,Integer> {
     @Query("select new net.codejava.store.product.models.view.OrderPreview(o)" +
             " from Order o where o.customer.id = ?1 and o.isCheck = -1")
     List<OrderPreview> getOrderCanceledByCustomerId(String id);
+
+    @Query("select new net.codejava.store.product.models.view.OrderPreview(o)" +
+            " from Order o where o.customer.id = ?1 and o.isCheck = 1")
+    Page<OrderPreview> getOrderCheckedByCustomer(String id, Pageable pageable);
+
+    @Query("select new net.codejava.store.product.models.view.OrderPreview(o)" +
+            " from Order o where o.customer.id = ?1 and o.isCheck = 0")
+    Page<OrderPreview> getOrderUncheckedByCustomer(String id, Pageable pageable);
+
+    @Query("select new net.codejava.store.product.models.view.OrderPreview(o)" +
+            " from Order o where o.customer.id = ?1 and o.isCheck = -1")
+    Page<OrderPreview> getOrderCanceledByCustomer(String id, Pageable pageable);
 }

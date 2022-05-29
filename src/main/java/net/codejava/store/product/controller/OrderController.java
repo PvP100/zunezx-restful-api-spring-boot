@@ -371,6 +371,7 @@ public class OrderController {
     @ApiOperation(value = "Lấy toàn bộ hóa đơn của khách hàng", response = Iterable.class)
     @GetMapping("/customerorder/{customerid}")
     public Response getCustomerOrder(
+            @RequestParam("type") int type,
             @PathVariable("customerid") String customerid,
             @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
             @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
@@ -385,7 +386,22 @@ public class OrderController {
 
         try {
             Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
-            Page<OrderPreview> orderView = orderRepository.getCustomerOrder(customerid,pageable);
+            Page<OrderPreview> orderView = null;
+            switch (type) {
+                case 0: {
+                    orderView = orderRepository.getOrderUncheckedByCustomer(customerid, pageable);
+                    break;
+                }
+                case 1: {
+                    orderView = orderRepository.getOrderCheckedByCustomer(customerid, pageable);
+                    break;
+                }
+                case -1: {
+                    orderView = orderRepository.getOrderCanceledByCustomer(customerid, pageable);
+                    break;
+                }
+            }
+
             response = new OkResponse(orderView);
         } catch (Exception e) {
             e.printStackTrace();

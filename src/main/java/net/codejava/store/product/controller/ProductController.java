@@ -9,7 +9,6 @@ import io.swagger.annotations.ApiParam;
 import net.codejava.store.auth.dao.UserRespository;
 import net.codejava.store.constants.Constant;
 import net.codejava.store.customer.dao.CustomerRespository;
-import net.codejava.store.customer.models.data.Customer;
 import net.codejava.store.product.dao.*;
 import net.codejava.store.product.models.data.*;
 import net.codejava.store.product.models.view.*;
@@ -18,17 +17,11 @@ import net.codejava.store.utils.PageAndSortRequestBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -59,6 +52,7 @@ public class ProductController {
     @GetMapping("/getProduct")
     public Response getAllClothes(
             @RequestParam(value = "categoryId", defaultValue = "0") int categoryId,
+            @RequestParam(value = "isSale", defaultValue = "0") int isSale,
             @RequestParam(value = "brandId", defaultValue = "0") int brandId,
             @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
             @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
@@ -74,13 +68,29 @@ public class ProductController {
         try {
             Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
             Page<ProductPreview> productPreviews = productsRepository.getAllClothesPreviews(pageable);
-            if (brandId != 0 && categoryId != 0) {
-                productPreviews = productsRepository.getProductByCategoryAndBrand(pageable, categoryId, brandId);
-            } else if (brandId != 0 && categoryId == 0) {
-                productPreviews = productsRepository.getProductByBrand(pageable, brandId);
-            } else if (brandId == 0 && categoryId != 0) {
-                productPreviews = productsRepository.getProductByCategory(pageable, categoryId);
+            if (isSale == 1) {
+                productPreviews = productsRepository.getAllProduct(pageable, isSale);
             }
+            if (brandId != 0 && categoryId != 0) {
+                if (isSale == 1) {
+                    productPreviews = productsRepository.getSaleProductByCategoryAndBrand(pageable, categoryId, brandId, isSale);
+                } else {
+                    productPreviews = productsRepository.getProductByCategoryAndBrand(pageable, categoryId, brandId);
+                }
+            } else if (brandId != 0 && categoryId == 0) {
+                if (isSale == 1) {
+                    productPreviews = productsRepository.getSaleProductByBrand(pageable, brandId, isSale);
+                } else {
+                    productPreviews = productsRepository.getProductByBrand(pageable, brandId);
+                }
+            } else if (brandId == 0 && categoryId != 0) {
+                if (isSale == 1) {
+                    productPreviews = productsRepository.getSaleProductByCategory(pageable, categoryId, isSale);
+                } else {
+                    productPreviews = productsRepository.getProductByCategory(pageable, categoryId);
+                }
+            }
+
 
             response = new OkResponse(productPreviews);
         } catch (Exception e) {
@@ -137,24 +147,24 @@ public class ProductController {
 //        }
 //        return response;
 //    }
-//    @ApiOperation(value = "Lấy chi tiết sản phẩm", response = Iterable.class)
-//    @GetMapping("product/{id}")
-//    public Response getDetailClothesWithoutAuth(
-//            @PathVariable("id") String clothesID) {
-//        Response response;
-//        try {
-//            Product product = productsRepository.findById(clothesID);
-//            if (product == null) {
-//                return new NotFoundResponse("Product not Exist");
-//            }
-//            ProductViewModel clothesViewModel = productsRepository.getClothesViewModel(clothesID);
-//            response = new OkResponse(clothesViewModel);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            response = new ServerErrorResponse();
-//        }
-//        return response;
-//    }
+    @ApiOperation(value = "Lấy chi tiết sản phẩm", response = Iterable.class)
+    @GetMapping("product/{id}")
+    public Response getDetailClothesWithoutAuth(
+            @PathVariable("id") String productId) {
+        Response response;
+        try {
+            Product product = productsRepository.findById(productId);
+            if (product == null) {
+                return new NotFoundResponse("Product not Exist");
+            }
+            ProductPreview productPreview = productsRepository.getProductDetail(productId);
+            response = new OkResponse(productPreview);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
 
     @ApiOperation(value = "api Thêm mới sản phẩm", response = Iterable.class)
     @RequestMapping(path = "/add", method = RequestMethod.POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })

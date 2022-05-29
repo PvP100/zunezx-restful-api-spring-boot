@@ -1,13 +1,15 @@
 package net.codejava.store.product.models.view;
 
+import net.codejava.store.product.models.data.Brand;
+import net.codejava.store.product.models.data.Category;
 import net.codejava.store.product.models.data.Product;
 
 public class ProductPreview {
     private String id;
     private String name;
     private double price;
-    private String category;
-    private String brand;
+    private Category category;
+    private Brand brand;
     private String logoUrl;
     private int quantity;
     private String description;
@@ -19,11 +21,11 @@ public class ProductPreview {
     public ProductPreview() {
     }
 
-    public String getBrand() {
+    public Brand getBrand() {
         return brand;
     }
 
-    public void setBrand(String brand) {
+    public void setBrand(Brand brand) {
         this.brand = brand;
     }
 
@@ -40,8 +42,8 @@ public class ProductPreview {
         this.name = product.getName();
         this.price = product.getPrice();
         this.logoUrl = product.getAvatarUrl();
-        this.category= product.getCategory().getTitle();
-        this.brand= product.getBrand().getBrandName();
+        this.category= product.getCategory();
+        this.brand= product.getBrand();
         this.quantity = product.getQuantity();
         this.isSale = product.getIsSale();
         this.salePercent = product.getSalePercent();
@@ -106,11 +108,11 @@ public class ProductPreview {
         this.name = name;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 

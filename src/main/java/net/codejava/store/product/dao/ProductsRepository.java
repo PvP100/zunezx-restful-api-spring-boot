@@ -3,7 +3,6 @@ package net.codejava.store.product.dao;
 import net.codejava.store.product.models.data.Product;
 import net.codejava.store.product.models.view.CategoryPreview;
 import net.codejava.store.product.models.view.ProductPreview;
-import net.codejava.store.product.models.view.ProductViewModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,6 +18,10 @@ public interface ProductsRepository extends JpaRepository<Product, String>{
     @Query("select new net.codejava.store.product.models.view.ProductPreview(c) " +
             " from Product c ")
     Page<ProductPreview> getAllClothesPreviews(Pageable pageable);
+
+    @Query("select new net.codejava.store.product.models.view.ProductPreview(c) " +
+            " from Product c where c.isSale = :isSale")
+    Page<ProductPreview> getAllProduct(Pageable pageable, @Param("isSale") int isSale);
 
     @Query("select new net.codejava.store.product.models.view.CategoryPreview(c) " +
             " from Product c ")
@@ -40,11 +43,23 @@ public interface ProductsRepository extends JpaRepository<Product, String>{
             " from Product c where c.category.id = :categoryId and c.brand.id = :brandId")
     Page<ProductPreview> getProductByCategoryAndBrand(Pageable pageable, @Param("categoryId") int categoryId, @Param("brandId") int brandId);
 
+    @Query("select new net.codejava.store.product.models.view.ProductPreview(c) " +
+            " from Product c where c.category.id = :categoryId and c.brand.id = :brandId and c.isSale = :isSale")
+    Page<ProductPreview> getSaleProductByCategoryAndBrand(Pageable pageable, @Param("categoryId") int categoryId, @Param("brandId") int brandId, @Param("isSale") int isSale);
+
+    @Query("select new net.codejava.store.product.models.view.ProductPreview(c) " +
+            " from Product c where c.category.id = :categoryId and c.brand.id = :brandId and c.isSale = :isSale")
+    Page<ProductPreview> getSaleProductByBrand(Pageable pageable, @Param("brandId") int brandId, @Param("isSale") int isSale);
+
+    @Query("select new net.codejava.store.product.models.view.ProductPreview(c) " +
+            " from Product c where c.category.id = :categoryId and c.brand.id = :brandId and c.isSale = :isSale")
+    Page<ProductPreview> getSaleProductByCategory(Pageable pageable, @Param("categoryId") int categoryId, @Param("isSale") int isSale);
+
     @Query("select new net.codejava.store.product.models.view.ProductPreview(c) from Product c where c.category.id = ?1")
     Page<ProductPreview> getSimilarClothesPreviews(Pageable pageable, int categoryID);
 
-    @Query("select new net.codejava.store.product.models.view.ProductViewModel(c) from Product c where c.id = ?1")
-    ProductViewModel getClothesViewModel(String clothesID);
+    @Query("select new net.codejava.store.product.models.view.ProductPreview(c) from Product c where c.id = ?1")
+    ProductPreview getProductDetail(String productId);
 
     @Query("select p.id from Product p where p.name = ?1")
     String getProductByName(String name);

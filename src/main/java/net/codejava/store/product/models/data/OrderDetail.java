@@ -6,7 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "order_detail")
+@Table(name = "order_item")
 public class OrderDetail {
     public static final String ID = "id";
 
