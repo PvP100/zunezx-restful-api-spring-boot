@@ -48,11 +48,11 @@ public interface ProductsRepository extends JpaRepository<Product, String>{
     Page<ProductPreview> getSaleProductByCategoryAndBrand(Pageable pageable, @Param("categoryId") int categoryId, @Param("brandId") int brandId, @Param("isSale") int isSale);
 
     @Query("select new net.codejava.store.product.models.view.ProductPreview(c) " +
-            " from Product c where c.category.id = :categoryId and c.brand.id = :brandId and c.isSale = :isSale")
+            " from Product c where c.brand.id = :brandId and c.isSale = :isSale")
     Page<ProductPreview> getSaleProductByBrand(Pageable pageable, @Param("brandId") int brandId, @Param("isSale") int isSale);
 
     @Query("select new net.codejava.store.product.models.view.ProductPreview(c) " +
-            " from Product c where c.category.id = :categoryId and c.brand.id = :brandId and c.isSale = :isSale")
+            " from Product c where c.category.id = :categoryId and c.isSale = :isSale")
     Page<ProductPreview> getSaleProductByCategory(Pageable pageable, @Param("categoryId") int categoryId, @Param("isSale") int isSale);
 
     @Query("select new net.codejava.store.product.models.view.ProductPreview(c) from Product c where c.category.id = ?1")
