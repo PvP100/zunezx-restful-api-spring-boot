@@ -41,9 +41,9 @@ public class Order {
     }
 
     public void addOrder(OrderBody body){
-        this.customerName = customer.getFullName();
-        this.phone = customer.getPhone();
-        this.address = customer.getAddress();
+        this.customerName = body.getCustomerName();
+        this.phone = body.getPhoneNumber();
+        this.address = body.getAddress();
         this.createAt = new Date();
         this.updateAt = new Date();
         this.isCheck = 0;

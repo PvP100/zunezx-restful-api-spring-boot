@@ -31,6 +31,11 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     @Query("update Category c set c.categoryTotalCount = c.categoryTotalCount + :count WHERE c.id = :id")
     void plusTotal(@Param("id") int id, @Param("count") int count);
 
+    @Transactional
+    @Modifying
+    @Query("update Category c set c.categoryTotalCount = c.categoryTotalCount - :count WHERE c.id = :id")
+    void minusTotal(@Param("id") int id, @Param("count") int count);
+
     @Query("select new net.codejava.store.product.models.view.CategoryView(c) " +
             "from Category c where c.title like %?1%")
     Page<CategoryView> searchCategoryByName(Pageable pageable, String name);
