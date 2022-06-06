@@ -134,14 +134,6 @@ public class OrderController {
             order.setIsCheck(1);
             order.setUpdateAt(new Date());
             orderRepository.save(order);
-            List<OrderDetailView> list = orderDetailRepository.getDetail(id);
-            for (OrderDetailView d : list) {
-                Product p = productsRepository.getOne(d.getProductId());
-                p.setQuantity(p.getQuantity() - d.getQuantity());
-                productsRepository.save(p);
-                categoryRepository.minusTotal(p.getCategory().getId(), d.getQuantity());
-                brandRepository.minusTotal(p.getCategory().getId(), d.getQuantity());
-            }
             response = new OkResponse(order.getUpdateAt());
         } catch (Exception e) {
             e.printStackTrace();
@@ -195,8 +187,10 @@ public class OrderController {
                 detail.addDetail(d);
                 detail.setOrder(order);
                 total += detail.getTotal();
-//                p.setQuantity(p.getQuantity() - d.getQuantity());
-//                productsRepository.save(p);
+                categoryRepository.minusTotal(p.getCategory().getId(), d.getQuantity());
+                brandRepository.minusTotal(p.getCategory().getId(), d.getQuantity());
+                p.setQuantity(p.getQuantity() - d.getQuantity());
+                productsRepository.save(p);
                 orderDetailRepository.save(detail);
             }
             order.setTotal(total);
